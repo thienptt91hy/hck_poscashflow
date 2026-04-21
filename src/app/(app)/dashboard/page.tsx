@@ -26,6 +26,7 @@ export default async function DashboardPage() {
     { data: cashMovements },
     { data: bankTxs },
     { data: varExpenses },
+    { data: salariesMonth },
   ] = await Promise.all([
     supabase.from("daily_sales").select("total_revenue").eq("sale_date", today),
     supabase.from("daily_sales").select("total_revenue").gte("sale_date", monthStart).lte("sale_date", today),
@@ -34,7 +35,8 @@ export default async function DashboardPage() {
     supabase.from("stores").select("id, code, name_vi, name_ja, name_en").order("sort_order"),
     supabase.from("cash_movements").select("direction, amount"),
     supabase.from("bank_transactions").select("direction, amount, fee"),
-    supabase.from("variable_expenses").select("amount, paid_from").gte("expense_date", monthStart).lte("expense_date", today),
+    supabase.from("variable_expenses").select("amount").gte("expense_date", monthStart).lte("expense_date", today),
+    supabase.from("salary_payments").select("amount").gte("period_month", monthStart).lte("period_month", today),
   ]);
 
   const todayTotal = (salesToday ?? []).reduce((s, r) => s + (r.total_revenue ?? 0), 0);
@@ -46,7 +48,8 @@ export default async function DashboardPage() {
     t.direction === "in" ? s + t.amount : s - (t.amount + (t.fee ?? 0)), 0);
 
   const expensesMonth = (varExpenses ?? []).reduce((s, e) => s + e.amount, 0);
-  const profit = monthTotal - expensesMonth;
+  const salaryMonth = (salariesMonth ?? []).reduce((s, p) => s + p.amount, 0);
+  const profit = monthTotal - expensesMonth - salaryMonth;
 
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
 
@@ -62,7 +65,7 @@ export default async function DashboardPage() {
           color={totalCash < 0 ? "text-red-600" : "text-emerald-700"} />
         <KpiCard label={dict.dashboard.bankBalance}    value={formatYen(bankBalance)}
           color={bankBalance < 0 ? "text-red-600" : "text-blue-700"} />
-        <KpiCard label={dict.dashboard.expensesThisMonth} value={formatYen(expensesMonth)}
+        <KpiCard label={dict.dashboard.expensesThisMonth} value={formatYen(expensesMonth + salaryMonth)}
           color="text-red-600" />
         <KpiCard label={dict.dashboard.profit}         value={formatYen(profit)}
           color={profit < 0 ? "text-red-600" : "text-emerald-700"} />

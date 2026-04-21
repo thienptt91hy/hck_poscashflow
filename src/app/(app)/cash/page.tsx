@@ -22,7 +22,7 @@ export default async function CashPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
 
-  const [{ data: stores }, { data: profile }, { data: movements }] = await Promise.all([
+  const [{ data: stores }, { data: profile }, { data: movements }, { data: allMovements }] = await Promise.all([
     supabase.from("stores").select("id, code, name_vi, name_ja, name_en").eq("active", true).order("sort_order"),
     supabase.from("user_profiles").select("role, store_id").eq("id", user!.id).single(),
     supabase
@@ -31,9 +31,11 @@ export default async function CashPage() {
       .order("move_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(80),
+    // Separate query for balance — no limit so it covers all historical records
+    supabase.from("cash_movements").select("store_id, direction, amount"),
   ]);
 
-  const balanceByStore = (movements ?? []).reduce<Record<string, number>>((acc, m) => {
+  const balanceByStore = (allMovements ?? []).reduce<Record<string, number>>((acc, m) => {
     const prev = acc[m.store_id] ?? 0;
     acc[m.store_id] = m.direction === "in" ? prev + m.amount : prev - m.amount;
     return acc;

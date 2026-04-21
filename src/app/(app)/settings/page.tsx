@@ -4,6 +4,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FixedExpenseEdit } from "./fixed-expense-edit";
+import { FixedExpenseAdd } from "./fixed-expense-add";
 import { UserRoleEdit } from "./user-role-edit";
 
 export const dynamic = "force-dynamic";
@@ -27,8 +28,9 @@ export default async function SettingsPage() {
 
       {/* Fixed expenses */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>📌 {dict.settings.fixedExpenses}</CardTitle>
+          <FixedExpenseAdd />
         </CardHeader>
         <CardContent className="p-0">
           <table className="w-full text-sm">
@@ -47,7 +49,13 @@ export default async function SettingsPage() {
                   <td className="px-4 py-2.5 text-zinc-500">{f.name_ja ?? "—"}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-red-600">{formatYen(f.amount)}</td>
                   <td className="px-4 py-2.5 text-center">
-                    <FixedExpenseEdit id={f.id} currentAmount={f.amount} dict={dict} />
+                    <FixedExpenseEdit
+                      id={f.id}
+                      currentAmount={f.amount}
+                      currentNameVi={f.name_vi}
+                      currentNameJa={f.name_ja ?? null}
+                      dict={dict}
+                    />
                   </td>
                 </tr>
               ))}

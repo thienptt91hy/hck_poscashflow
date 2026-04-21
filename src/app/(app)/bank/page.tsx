@@ -14,7 +14,7 @@ export default async function BankPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [{ data: profile }, { data: txs }] = await Promise.all([
+  const [{ data: profile }, { data: txs }, { data: allTxs }] = await Promise.all([
     supabase.from("user_profiles").select("role, store_id").eq("id", user!.id).single(),
     supabase
       .from("bank_transactions")
@@ -22,9 +22,11 @@ export default async function BankPage() {
       .order("tx_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(80),
+    // Separate query for balance — no limit so it covers all historical records
+    supabase.from("bank_transactions").select("direction, amount, fee"),
   ]);
 
-  const balance = (txs ?? []).reduce((s, t) => {
+  const balance = (allTxs ?? []).reduce((s, t) => {
     const net = t.direction === "in" ? t.amount : -(t.amount + (t.fee ?? 0));
     return s + net;
   }, 0);

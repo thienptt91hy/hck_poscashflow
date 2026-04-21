@@ -81,7 +81,7 @@ export default async function WholesalePage() {
                       <th className="px-4 py-2.5 text-left">{dict.wholesale.paymentMethod}</th>
                       <th className="px-4 py-2.5 text-left">{dict.wholesale.dueDate}</th>
                       <th className="px-4 py-2.5 text-right">{dict.common.amount}</th>
-                      <th className="px-4 py-2.5 text-center">状態</th>
+                      <th className="px-4 py-2.5 text-center">{dict.employees.status}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
