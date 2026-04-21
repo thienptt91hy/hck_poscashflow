@@ -19,7 +19,10 @@
     "empty": "No data", "success": "Success", "error": "Error",
     "today": "Today", "yesterday": "Yesterday", "thisMonth": "This month", "lastMonth": "Last month",
     "active": "Active", "inactive": "Inactive", "name": "Name", "position": "Position",
-    "amount": "Amount", "paymentMethod": "Payment method"
+    "amount": "Amount", "paymentMethod": "Payment method", "print": "Print report",
+    "month": "Month", "year": "Year", "paid": "Paid", "unpaid": "Unpaid",
+    "dueDate": "Due date", "customer": "Customer / Company",
+    "confirm": "Confirm", "update": "Update"
   },
   "sales": {
     "title": "Daily sales", "newEntry": "New sale", "customerCount": "Customer count",
@@ -46,10 +49,39 @@
   },
   "expenses": {
     "title": "Expenses", "variable": "Variable expenses", "newExpense": "Add expense",
-    "category": "Category", "paidFrom": "Paid from", "paidFromCash": "Cash", "paidFromBank": "Bank"
+    "category": "Category", "paidFrom": "Paid from", "paidFromCash": "Cash", "paidFromBank": "Bank",
+    "fixedMonthly": "Fixed monthly expenses", "editAmount": "Edit amount"
   },
   "employees": {
     "title": "Employees", "addEmployee": "Add employee", "position": "Position", "status": "Status"
+  },
+  "wholesale": {
+    "title": "Wholesale", "newOrder": "Add wholesale order",
+    "customer": "Customer / Company", "paymentMethod": "Payment method",
+    "paid": "Paid", "unpaid": "Unpaid", "dueDate": "Due date", "markPaid": "Mark as paid",
+    "method_cash": "Cash", "method_bank_transfer": "Bank transfer", "method_qr_card": "QR", "method_credit_card": "Credit card"
+  },
+  "salary": {
+    "title": "Salary", "newPayment": "Record salary",
+    "period": "Salary month", "paymentMethod": "Payment method",
+    "method_cash": "Cash", "method_bank_transfer": "Bank transfer", "method_qr_card": "QR", "method_credit_card": "Card"
+  },
+  "reports": {
+    "title": "Monthly report", "selectMonth": "Select month",
+    "revenueByStore": "Revenue by store", "totalRevenue": "Total revenue",
+    "cashIn": "Cash in", "cashOut": "Cash out",
+    "bankIn": "Bank in", "bankOut": "Bank out",
+    "fixedExpenses": "Fixed expenses", "variableExpenses": "Variable expenses",
+    "salaryTotal": "Total salary", "wholesale": "Wholesale revenue",
+    "grossProfit": "Gross profit", "netProfit": "Net profit (est.)",
+    "printReport": "🖨 Print report", "customers": "Customers"
+  },
+  "settings": {
+    "title": "Settings", "fixedExpenses": "Fixed expenses",
+    "storeExpenses": "Store expenses", "users": "Users",
+    "addUser": "Add user", "userRole": "Role",
+    "role_admin": "Admin", "role_manager": "Manager", "role_staff": "Staff",
+    "assignStore": "Assigned store", "updateRole": "Update role"
   },
   "dashboard": {
     "title": "Dashboard", "revenueThisMonth": "Revenue (month)", "revenueToday": "Revenue today",

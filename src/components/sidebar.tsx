@@ -11,6 +11,9 @@ import {
   CreditCard,
   Users,
   Settings,
+  Package,
+  Banknote,
+  FileBarChart2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -32,6 +35,9 @@ const NAV: NavItem[] = [
   { href: "/bank", labelKey: "bank", icon: Landmark, roles: ["admin", "manager"] },
   { href: "/expenses", labelKey: "expenses", icon: CreditCard, roles: ["admin", "manager"] },
   { href: "/employees", labelKey: "employees", icon: Users, roles: ["admin", "manager"] },
+  { href: "/wholesale", labelKey: "wholesale", icon: Package, roles: ["admin", "manager"] },
+  { href: "/salary", labelKey: "salary", icon: Banknote, roles: ["admin"] },
+  { href: "/reports", labelKey: "reports", icon: FileBarChart2, roles: ["admin", "manager"] },
   { href: "/settings", labelKey: "settings", icon: Settings, roles: ["admin"] },
 ];
 

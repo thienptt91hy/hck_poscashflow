@@ -17,6 +17,13 @@ body {
     "Meiryo", sans-serif;
 }
 
+/* Print styles for reports */
+@media print {
+  aside, header, .print\:hidden { display: none !important; }
+  body { background: white; }
+  main { padding: 0 !important; }
+}
+
 /* Hide number input spinners — we control +/- ourselves */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {

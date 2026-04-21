@@ -19,7 +19,10 @@
     "empty": "データなし", "success": "成功", "error": "エラー",
     "today": "今日", "yesterday": "昨日", "thisMonth": "今月", "lastMonth": "先月",
     "active": "在籍中", "inactive": "退職", "name": "名前", "position": "役職",
-    "amount": "金額", "paymentMethod": "支払方法"
+    "amount": "金額", "paymentMethod": "支払方法", "print": "印刷",
+    "month": "月", "year": "年", "paid": "支払済", "unpaid": "未払い",
+    "dueDate": "支払期限", "customer": "顧客 / 会社",
+    "confirm": "確認", "update": "更新"
   },
   "sales": {
     "title": "日次売上", "newEntry": "売上入力", "customerCount": "来客数",
@@ -46,10 +49,39 @@
   },
   "expenses": {
     "title": "経費", "variable": "変動経費", "newExpense": "経費追加",
-    "category": "カテゴリ", "paidFrom": "支払元", "paidFromCash": "現金", "paidFromBank": "銀行"
+    "category": "カテゴリ", "paidFrom": "支払元", "paidFromCash": "現金", "paidFromBank": "銀行",
+    "fixedMonthly": "毎月の固定費", "editAmount": "金額を編集"
   },
   "employees": {
     "title": "従業員", "addEmployee": "従業員追加", "position": "役職", "status": "状態"
+  },
+  "wholesale": {
+    "title": "卸売", "newOrder": "卸売追加",
+    "customer": "顧客 / 会社", "paymentMethod": "支払方法",
+    "paid": "支払済", "unpaid": "未払い", "dueDate": "支払期限", "markPaid": "支払済にする",
+    "method_cash": "現金", "method_bank_transfer": "振込", "method_qr_card": "QR", "method_credit_card": "クレカ"
+  },
+  "salary": {
+    "title": "給与", "newPayment": "給与記録",
+    "period": "給与月", "paymentMethod": "支払方法",
+    "method_cash": "現金", "method_bank_transfer": "振込", "method_qr_card": "QR", "method_credit_card": "クレカ"
+  },
+  "reports": {
+    "title": "月次レポート", "selectMonth": "月を選択",
+    "revenueByStore": "店舗別売上", "totalRevenue": "売上合計",
+    "cashIn": "現金収入", "cashOut": "現金支出",
+    "bankIn": "銀行入金", "bankOut": "銀行出金",
+    "fixedExpenses": "固定費", "variableExpenses": "変動経費",
+    "salaryTotal": "給与合計", "wholesale": "卸売売上",
+    "grossProfit": "粗利益", "netProfit": "純利益(概算)",
+    "printReport": "🖨 印刷", "customers": "来客数"
+  },
+  "settings": {
+    "title": "設定", "fixedExpenses": "固定費",
+    "storeExpenses": "店舗別経費", "users": "ユーザー",
+    "addUser": "ユーザー追加", "userRole": "役割",
+    "role_admin": "管理者", "role_manager": "マネージャー", "role_staff": "スタッフ",
+    "assignStore": "担当店舗", "updateRole": "権限更新"
   },
   "dashboard": {
     "title": "ダッシュボード", "revenueThisMonth": "今月の売上", "revenueToday": "本日の売上",

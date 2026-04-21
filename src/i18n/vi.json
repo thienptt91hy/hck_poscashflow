@@ -1,139 +1,98 @@
 {
-  "app": {
-    "name": "POS CashFlow",
-    "tagline": "Quản lý doanh thu & dòng tiền"
-  },
+  "app": { "name": "POS CashFlow", "tagline": "Quản lý doanh thu & dòng tiền" },
   "nav": {
-    "dashboard": "Tổng quan",
-    "sales": "Doanh thu",
-    "salesNew": "Nhập doanh thu",
-    "cash": "Tiền mặt",
-    "bank": "Ngân hàng",
-    "expenses": "Chi phí",
-    "wholesale": "Bán sỉ",
-    "employees": "Nhân viên",
-    "salary": "Lương",
-    "reports": "Báo cáo",
-    "settings": "Cài đặt",
-    "logout": "Đăng xuất"
+    "dashboard": "Tổng quan", "sales": "Doanh thu", "salesNew": "Nhập doanh thu",
+    "cash": "Tiền mặt", "bank": "Ngân hàng", "expenses": "Chi phí",
+    "wholesale": "Bán sỉ", "employees": "Nhân viên", "salary": "Lương",
+    "reports": "Báo cáo", "settings": "Cài đặt", "logout": "Đăng xuất"
   },
   "auth": {
-    "login": "Đăng nhập",
-    "email": "Email",
-    "password": "Mật khẩu",
-    "loginBtn": "Đăng nhập",
-    "loggingIn": "Đang đăng nhập...",
-    "invalidCredentials": "Email hoặc mật khẩu không đúng",
-    "welcome": "Chào mừng trở lại"
+    "login": "Đăng nhập", "email": "Email", "password": "Mật khẩu",
+    "loginBtn": "Đăng nhập", "loggingIn": "Đang đăng nhập...",
+    "invalidCredentials": "Email hoặc mật khẩu không đúng", "welcome": "Chào mừng trở lại"
   },
   "common": {
-    "save": "Lưu",
-    "saving": "Đang lưu...",
-    "cancel": "Huỷ",
-    "edit": "Sửa",
-    "delete": "Xoá",
-    "add": "Thêm mới",
-    "date": "Ngày",
-    "store": "Cửa hàng",
-    "employee": "Nhân viên",
-    "total": "Tổng",
-    "notes": "Ghi chú",
-    "loading": "Đang tải...",
-    "empty": "Chưa có dữ liệu",
-    "success": "Thành công",
-    "error": "Lỗi",
-    "today": "Hôm nay",
-    "yesterday": "Hôm qua",
-    "thisMonth": "Tháng này",
-    "lastMonth": "Tháng trước",
-    "active": "Đang làm",
-    "inactive": "Nghỉ việc",
-    "name": "Tên",
-    "position": "Vị trí",
-    "amount": "Số tiền",
-    "paymentMethod": "Phương thức"
+    "save": "Lưu", "saving": "Đang lưu...", "cancel": "Huỷ",
+    "edit": "Sửa", "delete": "Xoá", "add": "Thêm mới",
+    "date": "Ngày", "store": "Cửa hàng", "employee": "Nhân viên",
+    "total": "Tổng", "notes": "Ghi chú", "loading": "Đang tải...",
+    "empty": "Chưa có dữ liệu", "success": "Thành công", "error": "Lỗi",
+    "today": "Hôm nay", "yesterday": "Hôm qua", "thisMonth": "Tháng này", "lastMonth": "Tháng trước",
+    "active": "Đang làm", "inactive": "Nghỉ việc", "name": "Tên", "position": "Vị trí",
+    "amount": "Số tiền", "paymentMethod": "Phương thức", "print": "In báo cáo",
+    "month": "Tháng", "year": "Năm", "paid": "Đã thanh toán", "unpaid": "Chưa thanh toán",
+    "dueDate": "Hạn thanh toán", "customer": "Khách hàng / Công ty",
+    "confirm": "Xác nhận", "update": "Cập nhật"
   },
   "sales": {
-    "title": "Doanh thu hàng ngày",
-    "newEntry": "Nhập doanh thu",
-    "customerCount": "Số khách",
-    "cash": "Tiền mặt",
-    "qrCard": "QR / Thẻ",
-    "bankTransfer": "Chuyển khoản",
-    "totalRevenue": "Tổng doanh thu",
-    "avgPerCustomer": "TB/khách",
-    "revenueStream": "Dòng doanh thu",
-    "streamMain": "Chính (食事)",
-    "streamCafe": "Cafe/Bánh mì",
-    "saved": "Đã lưu doanh thu",
-    "unit": {
-      "customer": "khách",
-      "yen": "¥"
-    }
+    "title": "Doanh thu hàng ngày", "newEntry": "Nhập doanh thu", "customerCount": "Số khách",
+    "cash": "Tiền mặt", "qrCard": "QR / Thẻ", "bankTransfer": "Chuyển khoản",
+    "totalRevenue": "Tổng doanh thu", "avgPerCustomer": "TB/khách",
+    "revenueStream": "Dòng doanh thu", "streamMain": "Chính (食事)", "streamCafe": "Cafe/Bánh mì",
+    "saved": "Đã lưu doanh thu", "unit": { "customer": "khách", "yen": "¥" }
   },
   "cash": {
-    "newMovement": "Ghi tiền mặt",
-    "ledger": "Sổ quỹ",
-    "direction": "Loại",
-    "dirIn": "📥 Thu",
-    "dirOut": "📤 Chi",
-    "category": "Danh mục",
-    "amount": "Số tiền",
-    "cat_sales": "Doanh thu",
-    "cat_cod": "COD (代引き)",
-    "cat_purchase": "Mua vật dụng",
-    "cat_staff_take": "NV mang về",
-    "cat_deposit_to_bank": "Nộp ngân hàng",
-    "cat_adjust": "Điều chỉnh",
-    "cat_other": "Khác",
-    "depositFee": "Phí nộp (¥110)"
+    "newMovement": "Ghi tiền mặt", "ledger": "Sổ quỹ",
+    "direction": "Loại", "dirIn": "📥 Thu", "dirOut": "📤 Chi",
+    "category": "Danh mục", "amount": "Số tiền",
+    "cat_sales": "Doanh thu", "cat_cod": "COD (代引き)", "cat_purchase": "Mua vật dụng",
+    "cat_staff_take": "NV mang về", "cat_deposit_to_bank": "Nộp ngân hàng",
+    "cat_adjust": "Điều chỉnh", "cat_other": "Khác", "depositFee": "Phí nộp (¥110)"
   },
   "bank": {
-    "title": "Ngân hàng",
-    "newTx": "Thêm giao dịch",
-    "ledger": "Sổ ngân hàng",
-    "direction": "Loại",
-    "dirIn": "📥 Nhận",
-    "dirOut": "📤 Chi",
-    "category": "Danh mục",
-    "paymentMethod": "Phương thức",
-    "vendor": "Đơn vị / Nội dung",
-    "fee": "Phí",
-    "cat_deposit_from_store": "Tiền từ cửa hàng",
-    "cat_purchase": "Nhập hàng",
-    "cat_expense": "Chi phí",
-    "cat_salary": "Lương",
-    "cat_other": "Khác",
-    "method_bank_transfer": "Chuyển khoản",
-    "method_credit_card": "Thẻ tín dụng",
-    "method_cash": "Tiền mặt",
-    "method_qr_card": "QR / Thẻ"
+    "title": "Ngân hàng", "newTx": "Thêm giao dịch", "ledger": "Sổ ngân hàng",
+    "direction": "Loại", "dirIn": "📥 Nhận", "dirOut": "📤 Chi",
+    "category": "Danh mục", "paymentMethod": "Phương thức", "vendor": "Đơn vị / Nội dung", "fee": "Phí",
+    "cat_deposit_from_store": "Tiền từ cửa hàng", "cat_purchase": "Nhập hàng",
+    "cat_expense": "Chi phí", "cat_salary": "Lương", "cat_other": "Khác",
+    "method_bank_transfer": "Chuyển khoản", "method_credit_card": "Thẻ tín dụng",
+    "method_cash": "Tiền mặt", "method_qr_card": "QR / Thẻ"
   },
   "expenses": {
-    "title": "Chi phí",
-    "variable": "Chi phí phát sinh",
-    "newExpense": "Thêm chi phí",
-    "category": "Danh mục",
-    "paidFrom": "Thanh toán từ",
-    "paidFromCash": "Tiền mặt",
-    "paidFromBank": "Ngân hàng"
+    "title": "Chi phí", "variable": "Chi phí phát sinh", "newExpense": "Thêm chi phí",
+    "category": "Danh mục", "paidFrom": "Thanh toán từ",
+    "paidFromCash": "Tiền mặt", "paidFromBank": "Ngân hàng",
+    "fixedMonthly": "Chi phí cố định hàng tháng", "editAmount": "Sửa số tiền"
   },
   "employees": {
-    "title": "Nhân viên",
-    "addEmployee": "Thêm nhân viên",
-    "position": "Vị trí / Chức danh",
-    "status": "Trạng thái"
+    "title": "Nhân viên", "addEmployee": "Thêm nhân viên",
+    "position": "Vị trí / Chức danh", "status": "Trạng thái"
+  },
+  "wholesale": {
+    "title": "Bán sỉ", "newOrder": "Thêm đơn bán sỉ",
+    "customer": "Khách hàng / Công ty", "paymentMethod": "Phương thức",
+    "paid": "Đã thanh toán", "unpaid": "Chưa thanh toán",
+    "dueDate": "Hạn TT", "markPaid": "Đánh dấu đã thu",
+    "method_cash": "Tiền mặt", "method_bank_transfer": "Chuyển khoản",
+    "method_qr_card": "QR / Thẻ", "method_credit_card": "Thẻ tín dụng"
+  },
+  "salary": {
+    "title": "Lương nhân viên", "newPayment": "Ghi lương",
+    "period": "Tháng lương", "paymentMethod": "Phương thức",
+    "method_cash": "Tiền mặt", "method_bank_transfer": "Chuyển khoản",
+    "method_qr_card": "QR", "method_credit_card": "Thẻ"
+  },
+  "reports": {
+    "title": "Báo cáo tháng", "selectMonth": "Chọn tháng",
+    "revenueByStore": "Doanh thu theo cửa hàng", "totalRevenue": "Tổng doanh thu",
+    "cashIn": "Tiền mặt thu", "cashOut": "Tiền mặt chi",
+    "bankIn": "Ngân hàng nhận", "bankOut": "Ngân hàng chi",
+    "fixedExpenses": "Chi phí cố định", "variableExpenses": "Chi phí phát sinh",
+    "salaryTotal": "Lương nhân viên", "wholesale": "Doanh thu bán sỉ",
+    "grossProfit": "Lợi nhuận gộp", "netProfit": "Lợi nhuận ròng (ước tính)",
+    "printReport": "🖨 In báo cáo", "customers": "Lượt khách"
+  },
+  "settings": {
+    "title": "Cài đặt", "fixedExpenses": "Chi phí cố định",
+    "storeExpenses": "Chi phí theo cửa hàng", "users": "Người dùng",
+    "addUser": "Thêm người dùng", "userRole": "Vai trò",
+    "role_admin": "Admin", "role_manager": "Quản lý", "role_staff": "Nhân viên",
+    "assignStore": "Cửa hàng phụ trách", "updateRole": "Cập nhật quyền"
   },
   "dashboard": {
-    "title": "Tổng quan",
-    "revenueThisMonth": "Doanh thu tháng",
-    "revenueToday": "Doanh thu hôm nay",
-    "totalCash": "Tiền mặt hiện có",
-    "bankBalance": "Số dư ngân hàng",
-    "expensesThisMonth": "Chi phí tháng",
-    "profit": "Lợi nhuận",
-    "last30Days": "30 ngày gần nhất",
-    "byStore": "Theo cửa hàng",
-    "paymentMix": "Cơ cấu thanh toán"
+    "title": "Tổng quan", "revenueThisMonth": "Doanh thu tháng", "revenueToday": "Doanh thu hôm nay",
+    "totalCash": "Tiền mặt hiện có", "bankBalance": "Số dư ngân hàng",
+    "expensesThisMonth": "Chi phí tháng", "profit": "Lợi nhuận",
+    "last30Days": "30 ngày gần nhất", "byStore": "Theo cửa hàng", "paymentMix": "Cơ cấu thanh toán"
   }
 }
