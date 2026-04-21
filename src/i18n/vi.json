@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "POS CashFlow",
+    "tagline": "Quản lý doanh thu & dòng tiền"
+  },
+  "nav": {
+    "dashboard": "Tổng quan",
+    "sales": "Doanh thu",
+    "salesNew": "Nhập doanh thu",
+    "cash": "Tiền mặt",
+    "bank": "Ngân hàng",
+    "expenses": "Chi phí",
+    "wholesale": "Bán sỉ",
+    "employees": "Nhân viên",
+    "salary": "Lương",
+    "reports": "Báo cáo",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "loginBtn": "Đăng nhập",
+    "loggingIn": "Đang đăng nhập...",
+    "invalidCredentials": "Email hoặc mật khẩu không đúng",
+    "welcome": "Chào mừng trở lại"
+  },
+  "common": {
+    "save": "Lưu",
+    "saving": "Đang lưu...",
+    "cancel": "Huỷ",
+    "edit": "Sửa",
+    "delete": "Xoá",
+    "date": "Ngày",
+    "store": "Cửa hàng",
+    "employee": "Nhân viên",
+    "total": "Tổng",
+    "notes": "Ghi chú",
+    "loading": "Đang tải...",
+    "empty": "Chưa có dữ liệu",
+    "success": "Thành công",
+    "error": "Lỗi",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "thisMonth": "Tháng này",
+    "lastMonth": "Tháng trước"
+  },
+  "sales": {
+    "title": "Doanh thu hàng ngày",
+    "newEntry": "Nhập doanh thu",
+    "customerCount": "Số khách",
+    "cash": "Tiền mặt",
+    "qrCard": "QR / Thẻ",
+    "bankTransfer": "Chuyển khoản",
+    "totalRevenue": "Tổng doanh thu",
+    "avgPerCustomer": "TB/khách",
+    "revenueStream": "Dòng doanh thu",
+    "streamMain": "Chính (食事)",
+    "streamCafe": "Cafe/Bánh mì",
+    "saved": "Đã lưu doanh thu",
+    "unit": {
+      "customer": "khách",
+      "yen": "¥"
+    }
+  },
+  "dashboard": {
+    "title": "Tổng quan",
+    "revenueThisMonth": "Doanh thu tháng",
+    "revenueToday": "Doanh thu hôm nay",
+    "totalCash": "Tiền mặt hiện có",
+    "bankBalance": "Số dư ngân hàng",
+    "expensesThisMonth": "Chi phí tháng",
+    "profit": "Lợi nhuận",
+    "last30Days": "30 ngày gần nhất",
+    "byStore": "Theo cửa hàng",
+    "paymentMix": "Cơ cấu thanh toán"
+  }
+}

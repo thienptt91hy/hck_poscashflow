@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "POS CashFlow",
+    "tagline": "Sales & cash flow manager"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "sales": "Sales",
+    "salesNew": "New sale",
+    "cash": "Cash",
+    "bank": "Bank",
+    "expenses": "Expenses",
+    "wholesale": "Wholesale",
+    "employees": "Employees",
+    "salary": "Salary",
+    "reports": "Reports",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "loginBtn": "Sign in",
+    "loggingIn": "Signing in...",
+    "invalidCredentials": "Invalid email or password",
+    "welcome": "Welcome back"
+  },
+  "common": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "date": "Date",
+    "store": "Store",
+    "employee": "Employee",
+    "total": "Total",
+    "notes": "Notes",
+    "loading": "Loading...",
+    "empty": "No data",
+    "success": "Success",
+    "error": "Error",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisMonth": "This month",
+    "lastMonth": "Last month"
+  },
+  "sales": {
+    "title": "Daily sales",
+    "newEntry": "New sale",
+    "customerCount": "Customer count",
+    "cash": "Cash",
+    "qrCard": "QR / Card",
+    "bankTransfer": "Bank transfer",
+    "totalRevenue": "Total revenue",
+    "avgPerCustomer": "Avg / customer",
+    "revenueStream": "Revenue stream",
+    "streamMain": "Main (meals)",
+    "streamCafe": "Cafe / Bakery",
+    "saved": "Sale saved",
+    "unit": {
+      "customer": "ppl",
+      "yen": "¥"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "revenueThisMonth": "Revenue (month)",
+    "revenueToday": "Revenue today",
+    "totalCash": "Cash on hand",
+    "bankBalance": "Bank balance",
+    "expensesThisMonth": "Expenses (month)",
+    "profit": "Profit",
+    "last30Days": "Last 30 days",
+    "byStore": "By store",
+    "paymentMix": "Payment mix"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "POS CashFlow",
+    "tagline": "売上・資金管理"
+  },
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "sales": "売上",
+    "salesNew": "売上入力",
+    "cash": "現金",
+    "bank": "銀行",
+    "expenses": "経費",
+    "wholesale": "卸売",
+    "employees": "従業員",
+    "salary": "給与",
+    "reports": "レポート",
+    "settings": "設定",
+    "logout": "ログアウト"
+  },
+  "auth": {
+    "login": "ログイン",
+    "email": "メール",
+    "password": "パスワード",
+    "loginBtn": "ログイン",
+    "loggingIn": "ログイン中...",
+    "invalidCredentials": "メールまたはパスワードが違います",
+    "welcome": "おかえりなさい"
+  },
+  "common": {
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "delete": "削除",
+    "date": "日付",
+    "store": "店舗",
+    "employee": "従業員",
+    "total": "合計",
+    "notes": "メモ",
+    "loading": "読み込み中...",
+    "empty": "データなし",
+    "success": "成功",
+    "error": "エラー",
+    "today": "今日",
+    "yesterday": "昨日",
+    "thisMonth": "今月",
+    "lastMonth": "先月"
+  },
+  "sales": {
+    "title": "日次売上",
+    "newEntry": "売上入力",
+    "customerCount": "来客数",
+    "cash": "現金",
+    "qrCard": "QR / カード",
+    "bankTransfer": "振込",
+    "totalRevenue": "売上合計",
+    "avgPerCustomer": "平均単価",
+    "revenueStream": "売上区分",
+    "streamMain": "メイン (食事)",
+    "streamCafe": "カフェ/パン",
+    "saved": "売上を保存しました",
+    "unit": {
+      "customer": "人",
+      "yen": "¥"
+    }
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "revenueThisMonth": "今月の売上",
+    "revenueToday": "本日の売上",
+    "totalCash": "現金残高",
+    "bankBalance": "銀行残高",
+    "expensesThisMonth": "今月の経費",
+    "profit": "利益",
+    "last30Days": "直近30日",
+    "byStore": "店舗別",
+    "paymentMix": "支払い構成"
+  }
+}
