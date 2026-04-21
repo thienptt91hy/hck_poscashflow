@@ -1,79 +1,59 @@
 {
-  "app": {
-    "name": "POS CashFlow",
-    "tagline": "売上・資金管理"
-  },
+  "app": { "name": "POS CashFlow", "tagline": "売上・資金管理" },
   "nav": {
-    "dashboard": "ダッシュボード",
-    "sales": "売上",
-    "salesNew": "売上入力",
-    "cash": "現金",
-    "bank": "銀行",
-    "expenses": "経費",
-    "wholesale": "卸売",
-    "employees": "従業員",
-    "salary": "給与",
-    "reports": "レポート",
-    "settings": "設定",
-    "logout": "ログアウト"
+    "dashboard": "ダッシュボード", "sales": "売上", "salesNew": "売上入力",
+    "cash": "現金", "bank": "銀行", "expenses": "経費", "wholesale": "卸売",
+    "employees": "従業員", "salary": "給与", "reports": "レポート",
+    "settings": "設定", "logout": "ログアウト"
   },
   "auth": {
-    "login": "ログイン",
-    "email": "メール",
-    "password": "パスワード",
-    "loginBtn": "ログイン",
-    "loggingIn": "ログイン中...",
-    "invalidCredentials": "メールまたはパスワードが違います",
-    "welcome": "おかえりなさい"
+    "login": "ログイン", "email": "メール", "password": "パスワード",
+    "loginBtn": "ログイン", "loggingIn": "ログイン中...",
+    "invalidCredentials": "メールまたはパスワードが違います", "welcome": "おかえりなさい"
   },
   "common": {
-    "save": "保存",
-    "saving": "保存中...",
-    "cancel": "キャンセル",
-    "edit": "編集",
-    "delete": "削除",
-    "date": "日付",
-    "store": "店舗",
-    "employee": "従業員",
-    "total": "合計",
-    "notes": "メモ",
-    "loading": "読み込み中...",
-    "empty": "データなし",
-    "success": "成功",
-    "error": "エラー",
-    "today": "今日",
-    "yesterday": "昨日",
-    "thisMonth": "今月",
-    "lastMonth": "先月"
+    "save": "保存", "saving": "保存中...", "cancel": "キャンセル",
+    "edit": "編集", "delete": "削除", "add": "追加",
+    "date": "日付", "store": "店舗", "employee": "従業員",
+    "total": "合計", "notes": "メモ", "loading": "読み込み中...",
+    "empty": "データなし", "success": "成功", "error": "エラー",
+    "today": "今日", "yesterday": "昨日", "thisMonth": "今月", "lastMonth": "先月",
+    "active": "在籍中", "inactive": "退職", "name": "名前", "position": "役職",
+    "amount": "金額", "paymentMethod": "支払方法"
   },
   "sales": {
-    "title": "日次売上",
-    "newEntry": "売上入力",
-    "customerCount": "来客数",
-    "cash": "現金",
-    "qrCard": "QR / カード",
-    "bankTransfer": "振込",
-    "totalRevenue": "売上合計",
-    "avgPerCustomer": "平均単価",
-    "revenueStream": "売上区分",
-    "streamMain": "メイン (食事)",
-    "streamCafe": "カフェ/パン",
-    "saved": "売上を保存しました",
-    "unit": {
-      "customer": "人",
-      "yen": "¥"
-    }
+    "title": "日次売上", "newEntry": "売上入力", "customerCount": "来客数",
+    "cash": "現金", "qrCard": "QR / カード", "bankTransfer": "振込",
+    "totalRevenue": "売上合計", "avgPerCustomer": "平均単価",
+    "revenueStream": "売上区分", "streamMain": "メイン (食事)", "streamCafe": "カフェ/パン",
+    "saved": "売上を保存しました", "unit": { "customer": "人", "yen": "¥" }
+  },
+  "cash": {
+    "newMovement": "現金記録", "ledger": "現金出納帳",
+    "direction": "種別", "dirIn": "📥 入金", "dirOut": "📤 出金",
+    "category": "カテゴリ", "amount": "金額",
+    "cat_sales": "売上", "cat_cod": "代引き", "cat_purchase": "仕入",
+    "cat_staff_take": "スタッフ持帰", "cat_deposit_to_bank": "銀行入金",
+    "cat_adjust": "調整", "cat_other": "その他", "depositFee": "入金手数料(¥110)"
+  },
+  "bank": {
+    "title": "銀行", "newTx": "取引追加", "ledger": "銀行台帳",
+    "direction": "種別", "dirIn": "📥 入金", "dirOut": "📤 出金",
+    "category": "カテゴリ", "paymentMethod": "支払方法", "vendor": "相手先", "fee": "手数料",
+    "cat_deposit_from_store": "店舗からの入金", "cat_purchase": "仕入", "cat_expense": "経費",
+    "cat_salary": "給与", "cat_other": "その他",
+    "method_bank_transfer": "振込", "method_credit_card": "クレカ", "method_cash": "現金", "method_qr_card": "QR"
+  },
+  "expenses": {
+    "title": "経費", "variable": "変動経費", "newExpense": "経費追加",
+    "category": "カテゴリ", "paidFrom": "支払元", "paidFromCash": "現金", "paidFromBank": "銀行"
+  },
+  "employees": {
+    "title": "従業員", "addEmployee": "従業員追加", "position": "役職", "status": "状態"
   },
   "dashboard": {
-    "title": "ダッシュボード",
-    "revenueThisMonth": "今月の売上",
-    "revenueToday": "本日の売上",
-    "totalCash": "現金残高",
-    "bankBalance": "銀行残高",
-    "expensesThisMonth": "今月の経費",
-    "profit": "利益",
-    "last30Days": "直近30日",
-    "byStore": "店舗別",
-    "paymentMix": "支払い構成"
+    "title": "ダッシュボード", "revenueThisMonth": "今月の売上", "revenueToday": "本日の売上",
+    "totalCash": "現金残高", "bankBalance": "銀行残高", "expensesThisMonth": "今月の経費",
+    "profit": "利益", "last30Days": "直近30日", "byStore": "店舗別", "paymentMix": "支払い構成"
   }
 }

@@ -21,12 +21,13 @@ interface NavItem {
   labelKey: keyof Dictionary["nav"];
   icon: React.ComponentType<{ className?: string }>;
   roles?: UserRole[];
+  exact?: boolean;
 }
 
 const NAV: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard, roles: ["admin", "manager"] },
-  { href: "/sales/new", labelKey: "salesNew", icon: PlusCircle },
-  { href: "/sales", labelKey: "sales", icon: Receipt },
+  { href: "/sales/new", labelKey: "salesNew", icon: PlusCircle, exact: true },
+  { href: "/sales", labelKey: "sales", icon: Receipt, exact: true },
   { href: "/cash", labelKey: "cash", icon: Wallet },
   { href: "/bank", labelKey: "bank", icon: Landmark, roles: ["admin", "manager"] },
   { href: "/expenses", labelKey: "expenses", icon: CreditCard, roles: ["admin", "manager"] },
@@ -45,8 +46,8 @@ export function Sidebar({ dict, role }: { dict: Dictionary; role: UserRole }) {
         <span className="text-lg font-semibold text-zinc-900">{dict.app.name}</span>
       </div>
       <nav className="flex-1 p-2 space-y-0.5">
-        {visible.map(({ href, labelKey, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(href + "/");
+        {visible.map(({ href, labelKey, icon: Icon, exact }) => {
+          const active = exact ? pathname === href : (pathname === href || pathname.startsWith(href + "/"));
           return (
             <Link
               key={href}

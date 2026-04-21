@@ -1,79 +1,59 @@
 {
-  "app": {
-    "name": "POS CashFlow",
-    "tagline": "Sales & cash flow manager"
-  },
+  "app": { "name": "POS CashFlow", "tagline": "Sales & cash flow manager" },
   "nav": {
-    "dashboard": "Dashboard",
-    "sales": "Sales",
-    "salesNew": "New sale",
-    "cash": "Cash",
-    "bank": "Bank",
-    "expenses": "Expenses",
-    "wholesale": "Wholesale",
-    "employees": "Employees",
-    "salary": "Salary",
-    "reports": "Reports",
-    "settings": "Settings",
-    "logout": "Log out"
+    "dashboard": "Dashboard", "sales": "Sales", "salesNew": "New sale",
+    "cash": "Cash", "bank": "Bank", "expenses": "Expenses", "wholesale": "Wholesale",
+    "employees": "Employees", "salary": "Salary", "reports": "Reports",
+    "settings": "Settings", "logout": "Log out"
   },
   "auth": {
-    "login": "Sign in",
-    "email": "Email",
-    "password": "Password",
-    "loginBtn": "Sign in",
-    "loggingIn": "Signing in...",
-    "invalidCredentials": "Invalid email or password",
-    "welcome": "Welcome back"
+    "login": "Sign in", "email": "Email", "password": "Password",
+    "loginBtn": "Sign in", "loggingIn": "Signing in...",
+    "invalidCredentials": "Invalid email or password", "welcome": "Welcome back"
   },
   "common": {
-    "save": "Save",
-    "saving": "Saving...",
-    "cancel": "Cancel",
-    "edit": "Edit",
-    "delete": "Delete",
-    "date": "Date",
-    "store": "Store",
-    "employee": "Employee",
-    "total": "Total",
-    "notes": "Notes",
-    "loading": "Loading...",
-    "empty": "No data",
-    "success": "Success",
-    "error": "Error",
-    "today": "Today",
-    "yesterday": "Yesterday",
-    "thisMonth": "This month",
-    "lastMonth": "Last month"
+    "save": "Save", "saving": "Saving...", "cancel": "Cancel",
+    "edit": "Edit", "delete": "Delete", "add": "Add new",
+    "date": "Date", "store": "Store", "employee": "Employee",
+    "total": "Total", "notes": "Notes", "loading": "Loading...",
+    "empty": "No data", "success": "Success", "error": "Error",
+    "today": "Today", "yesterday": "Yesterday", "thisMonth": "This month", "lastMonth": "Last month",
+    "active": "Active", "inactive": "Inactive", "name": "Name", "position": "Position",
+    "amount": "Amount", "paymentMethod": "Payment method"
   },
   "sales": {
-    "title": "Daily sales",
-    "newEntry": "New sale",
-    "customerCount": "Customer count",
-    "cash": "Cash",
-    "qrCard": "QR / Card",
-    "bankTransfer": "Bank transfer",
-    "totalRevenue": "Total revenue",
-    "avgPerCustomer": "Avg / customer",
-    "revenueStream": "Revenue stream",
-    "streamMain": "Main (meals)",
-    "streamCafe": "Cafe / Bakery",
-    "saved": "Sale saved",
-    "unit": {
-      "customer": "ppl",
-      "yen": "¥"
-    }
+    "title": "Daily sales", "newEntry": "New sale", "customerCount": "Customer count",
+    "cash": "Cash", "qrCard": "QR / Card", "bankTransfer": "Bank transfer",
+    "totalRevenue": "Total revenue", "avgPerCustomer": "Avg / customer",
+    "revenueStream": "Revenue stream", "streamMain": "Main (meals)", "streamCafe": "Cafe / Bakery",
+    "saved": "Sale saved", "unit": { "customer": "ppl", "yen": "¥" }
+  },
+  "cash": {
+    "newMovement": "Record cash", "ledger": "Cash ledger",
+    "direction": "Type", "dirIn": "📥 In", "dirOut": "📤 Out",
+    "category": "Category", "amount": "Amount",
+    "cat_sales": "Sales", "cat_cod": "COD", "cat_purchase": "Purchase",
+    "cat_staff_take": "Staff take", "cat_deposit_to_bank": "Deposit to bank",
+    "cat_adjust": "Adjustment", "cat_other": "Other", "depositFee": "Deposit fee (¥110)"
+  },
+  "bank": {
+    "title": "Bank", "newTx": "Add transaction", "ledger": "Bank ledger",
+    "direction": "Type", "dirIn": "📥 In", "dirOut": "📤 Out",
+    "category": "Category", "paymentMethod": "Payment method", "vendor": "Vendor / Description", "fee": "Fee",
+    "cat_deposit_from_store": "Deposit from store", "cat_purchase": "Purchase", "cat_expense": "Expense",
+    "cat_salary": "Salary", "cat_other": "Other",
+    "method_bank_transfer": "Bank transfer", "method_credit_card": "Credit card", "method_cash": "Cash", "method_qr_card": "QR"
+  },
+  "expenses": {
+    "title": "Expenses", "variable": "Variable expenses", "newExpense": "Add expense",
+    "category": "Category", "paidFrom": "Paid from", "paidFromCash": "Cash", "paidFromBank": "Bank"
+  },
+  "employees": {
+    "title": "Employees", "addEmployee": "Add employee", "position": "Position", "status": "Status"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "revenueThisMonth": "Revenue (month)",
-    "revenueToday": "Revenue today",
-    "totalCash": "Cash on hand",
-    "bankBalance": "Bank balance",
-    "expensesThisMonth": "Expenses (month)",
-    "profit": "Profit",
-    "last30Days": "Last 30 days",
-    "byStore": "By store",
-    "paymentMix": "Payment mix"
+    "title": "Dashboard", "revenueThisMonth": "Revenue (month)", "revenueToday": "Revenue today",
+    "totalCash": "Cash on hand", "bankBalance": "Bank balance", "expensesThisMonth": "Expenses (month)",
+    "profit": "Profit", "last30Days": "Last 30 days", "byStore": "By store", "paymentMix": "Payment mix"
   }
 }
