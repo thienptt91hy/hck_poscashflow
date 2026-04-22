@@ -8,6 +8,8 @@ import { FixedExpenseAdd } from "./fixed-expense-add";
 import { UserRoleEdit } from "./user-role-edit";
 import { UserAddForm } from "./user-add-form";
 import { UserDeleteButton } from "./user-delete-button";
+import { StoreAddForm } from "./store-add-form";
+import { StoreRowActions } from "./store-row-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +22,7 @@ export default async function SettingsPage() {
 
   const [{ data: fixedExp }, { data: stores }, { data: users }] = await Promise.all([
     supabase.from("fixed_expenses").select("id, name_vi, name_ja, amount, active").order("name_vi"),
-    supabase.from("stores").select("id, name_vi, name_ja, name_en").order("sort_order"),
+    supabase.from("stores").select("id, code, name_vi, name_ja, name_en, has_cafe_bakery, active, sort_order").order("sort_order"),
     supabase.from("user_profiles").select("id, email, full_name, role, store_id, active").order("role"),
   ]);
 
@@ -76,6 +78,50 @@ export default async function SettingsPage() {
               </tr>
             </tbody>
           </table>
+        </CardContent>
+      </Card>
+
+      {/* Store management */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>🏪 {dict.settings.stores}</CardTitle>
+          <StoreAddForm dict={dict} />
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-zinc-50 text-xs uppercase text-zinc-500">
+                <tr>
+                  <th className="px-4 py-2.5 text-left">{dict.settings.storeCode}</th>
+                  <th className="px-4 py-2.5 text-left">Tên VI</th>
+                  <th className="px-4 py-2.5 text-left">Tên JA</th>
+                  <th className="px-4 py-2.5 text-center">{dict.settings.hasCafeBakery}</th>
+                  <th className="px-4 py-2.5 text-center">{dict.settings.sortOrder}</th>
+                  <th className="px-4 py-2.5 text-center">{dict.settings.storeActive}</th>
+                  <th className="px-4 py-2.5 text-center">{dict.common.edit} / Xoá</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {(stores ?? []).map((s) => (
+                  <tr key={s.id} className={`hover:bg-zinc-50 ${!s.active ? "opacity-50" : ""}`}>
+                    <td className="px-4 py-2.5 font-mono font-semibold text-zinc-700">{s.code}</td>
+                    <td className="px-4 py-2.5 font-medium">{s.name_vi}</td>
+                    <td className="px-4 py-2.5 text-zinc-500">{s.name_ja ?? "—"}</td>
+                    <td className="px-4 py-2.5 text-center">{s.has_cafe_bakery ? "✓" : "—"}</td>
+                    <td className="px-4 py-2.5 text-center tabular-nums">{s.sort_order}</td>
+                    <td className="px-4 py-2.5 text-center">
+                      <span className={`text-xs rounded px-1.5 py-0.5 ${s.active ? "bg-emerald-100 text-emerald-700" : "bg-zinc-100 text-zinc-500"}`}>
+                        {s.active ? dict.settings.storeActive : dict.settings.storeInactive}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <StoreRowActions row={s} dict={dict} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
 

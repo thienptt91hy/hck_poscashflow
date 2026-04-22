@@ -87,7 +87,11 @@
     "storeExpenses": "Chi phí theo cửa hàng", "users": "Người dùng",
     "addUser": "Thêm người dùng", "userRole": "Vai trò",
     "role_admin": "Admin", "role_manager": "Quản lý", "role_staff": "Nhân viên",
-    "assignStore": "Cửa hàng phụ trách", "updateRole": "Cập nhật quyền"
+    "assignStore": "Cửa hàng phụ trách", "updateRole": "Cập nhật quyền",
+    "stores": "Cửa hàng", "addStore": "Thêm cửa hàng", "editStore": "Sửa cửa hàng",
+    "storeCode": "Mã (Code)", "hasCafeBakery": "Có quán cafe / bánh mì",
+    "sortOrder": "Thứ tự hiển thị", "storeActive": "Đang hoạt động", "storeInactive": "Tạm dừng",
+    "deleteStoreError": "Không thể xoá — cửa hàng đang có dữ liệu liên quan"
   },
   "dashboard": {
     "title": "Tổng quan",

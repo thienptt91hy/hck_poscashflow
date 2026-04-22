@@ -81,7 +81,11 @@
     "storeExpenses": "Store expenses", "users": "Users",
     "addUser": "Add user", "userRole": "Role",
     "role_admin": "Admin", "role_manager": "Manager", "role_staff": "Staff",
-    "assignStore": "Assigned store", "updateRole": "Update role"
+    "assignStore": "Assigned store", "updateRole": "Update role",
+    "stores": "Stores", "addStore": "Add store", "editStore": "Edit store",
+    "storeCode": "Code", "hasCafeBakery": "Has cafe / bakery",
+    "sortOrder": "Display order", "storeActive": "Active", "storeInactive": "Inactive",
+    "deleteStoreError": "Cannot delete — store has related data"
   },
   "dashboard": {
     "title": "Dashboard",

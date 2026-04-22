@@ -81,7 +81,11 @@
     "storeExpenses": "店舗別経費", "users": "ユーザー",
     "addUser": "ユーザー追加", "userRole": "役割",
     "role_admin": "管理者", "role_manager": "マネージャー", "role_staff": "スタッフ",
-    "assignStore": "担当店舗", "updateRole": "権限更新"
+    "assignStore": "担当店舗", "updateRole": "権限更新",
+    "stores": "店舗", "addStore": "店舗追加", "editStore": "店舗編集",
+    "storeCode": "コード", "hasCafeBakery": "カフェ/パンあり",
+    "sortOrder": "表示順", "storeActive": "営業中", "storeInactive": "休業中",
+    "deleteStoreError": "データが存在するため削除できません"
   },
   "dashboard": {
     "title": "ダッシュボード",
