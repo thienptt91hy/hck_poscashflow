@@ -5,6 +5,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlusCircle } from "lucide-react";
+import { SalesRowActions } from "./sales-row-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,16 +14,28 @@ export default async function SalesListPage() {
   const dict = await getDictionary(locale);
   const supabase = await createClient();
 
-  const { data: rows } = await supabase
-    .from("daily_sales")
-    .select(
-      "id, sale_date, store_id, revenue_stream, customer_count, cash, qr_card, bank_transfer, total_revenue, avg_per_customer, notes, stores(code, name_vi, name_ja, name_en)",
-    )
-    .order("sale_date", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(50);
+  const [{ data: rows }, { data: stores }] = await Promise.all([
+    supabase
+      .from("daily_sales")
+      .select(
+        "id, sale_date, store_id, revenue_stream, customer_count, cash, qr_card, bank_transfer, total_revenue, avg_per_customer, notes, stores(code, name_vi, name_ja, name_en)",
+      )
+      .order("sale_date", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase
+      .from("stores")
+      .select("id, name_vi, name_ja, name_en, has_cafe_bakery")
+      .eq("active", true)
+      .order("sort_order"),
+  ]);
 
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
+  const storeOpts = (stores ?? []).map((s) => ({
+    id: s.id,
+    name: (s[nameField as "name_vi"] as string | null) ?? s.name_vi,
+    has_cafe_bakery: s.has_cafe_bakery,
+  }));
 
   return (
     <div className="space-y-5">
@@ -63,6 +76,7 @@ export default async function SalesListPage() {
                     <th className="px-4 py-2.5 text-right font-medium">
                       {dict.sales.totalRevenue}
                     </th>
+                    <th className="px-4 py-2.5 text-center font-medium w-20"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
@@ -97,6 +111,23 @@ export default async function SalesListPage() {
                         </td>
                         <td className="px-4 py-2.5 text-right font-semibold tabular-nums">
                           {formatYen(r.total_revenue)}
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <SalesRowActions
+                            row={{
+                              id: r.id,
+                              sale_date: r.sale_date,
+                              store_id: r.store_id,
+                              revenue_stream: r.revenue_stream,
+                              customer_count: r.customer_count,
+                              cash: r.cash,
+                              qr_card: r.qr_card,
+                              bank_transfer: r.bank_transfer,
+                              notes: r.notes ?? null,
+                            }}
+                            stores={storeOpts}
+                            dict={dict}
+                          />
                         </td>
                       </tr>
                     );
