@@ -36,6 +36,7 @@ export function SalesRowActions({
   const [pending, startTransition] = useTransition();
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [saleDate, setSaleDate] = useState(row.sale_date);
   const [storeId, setStoreId] = useState(row.store_id);
@@ -83,9 +84,13 @@ export function SalesRowActions({
   };
 
   const handleDelete = () => {
+    setDeleteError(null);
     startTransition(async () => {
       const supabase = createClient();
-      await supabase.from("daily_sales").delete().eq("id", row.id);
+      const { error, count } = await supabase
+        .from("daily_sales").delete({ count: "exact" }).eq("id", row.id);
+      if (error) { setDeleteError(error.message); return; }
+      if (count === 0) { setDeleteError("Không có quyền xóa. Liên hệ Admin."); return; }
       setShowDelete(false);
       router.refresh();
     });
@@ -123,9 +128,12 @@ export function SalesRowActions({
               Xoá doanh thu ngày <strong className="text-zinc-800">{row.sale_date}</strong>?
               <br />Thao tác này không thể hoàn tác.
             </p>
+            {deleteError && (
+              <p className="text-sm text-red-600 bg-red-50 rounded px-3 py-2 mb-3">{deleteError}</p>
+            )}
             <div className="flex gap-2 justify-end">
               <button
-                onClick={() => setShowDelete(false)}
+                onClick={() => { setShowDelete(false); setDeleteError(null); }}
                 className="rounded-lg border px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50"
               >
                 {dict.common.cancel}
