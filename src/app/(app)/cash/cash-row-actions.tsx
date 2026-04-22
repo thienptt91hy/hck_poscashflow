@@ -11,7 +11,7 @@ const OUT_CATS = ["cod", "purchase", "staff_take", "deposit_to_bank", "adjust", 
 interface Row {
   id: string;
   move_date: string;
-  store_id: string;
+  store_id: string | null;
   direction: "in" | "out";
   category: string;
   amount: number;
@@ -30,7 +30,7 @@ export function CashRowActions({ row, stores, dict }: {
   const [showDel, setShowDel] = useState(false);
 
   const [date, setDate] = useState(row.move_date);
-  const [storeId, setStoreId] = useState(row.store_id);
+  const [storeId, setStoreId] = useState(row.store_id ?? stores[0]?.id ?? "");
   const [direction, setDirection] = useState<"in" | "out">(row.direction);
   const [category, setCategory] = useState(row.category);
   const [amount, setAmount] = useState(String(row.amount));
@@ -43,7 +43,7 @@ export function CashRowActions({ row, stores, dict }: {
     const dir = row.direction;
     const validCats = dir === "in" ? (IN_CATS as readonly string[]) : (OUT_CATS as readonly string[]);
     const cat = validCats.includes(row.category) ? row.category : (dir === "in" ? "sales" : "purchase");
-    setDate(row.move_date); setStoreId(row.store_id); setDirection(dir);
+    setDate(row.move_date); setStoreId(row.store_id ?? stores[0]?.id ?? ""); setDirection(dir);
     setCategory(cat); setAmount(String(row.amount)); setNote(row.note ?? "");
     setShowEdit(true);
   };

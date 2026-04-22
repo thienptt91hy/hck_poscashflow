@@ -36,13 +36,17 @@ export default async function CashPage() {
     supabase.from("cash_movements").select("store_id, direction, amount"),
   ]);
 
+  const GENERAL_KEY = "__general__";
+
   const balanceByStore = (allMovements ?? []).reduce<Record<string, number>>((acc, m) => {
-    const prev = acc[m.store_id] ?? 0;
-    acc[m.store_id] = m.direction === "in" ? prev + m.amount : prev - m.amount;
+    const key = m.store_id ?? GENERAL_KEY;
+    const prev = acc[key] ?? 0;
+    acc[key] = m.direction === "in" ? prev + m.amount : prev - m.amount;
     return acc;
   }, {});
 
   const totalCash = Object.values(balanceByStore).reduce((s, v) => s + v, 0);
+  const generalBal = balanceByStore[GENERAL_KEY] ?? 0;
 
   return (
     <div className="space-y-6">
@@ -56,6 +60,16 @@ export default async function CashPage() {
             <div className="mt-1 text-2xl font-bold tabular-nums">{formatYen(totalCash)}</div>
           </CardContent>
         </Card>
+        {generalBal !== 0 && (
+          <Card className="border-blue-200 bg-blue-50">
+            <CardContent>
+              <div className="text-xs text-blue-600">Quỹ chung</div>
+              <div className={`mt-1 text-xl font-semibold tabular-nums ${generalBal < 0 ? "text-red-600" : "text-blue-900"}`}>
+                {formatYen(generalBal)}
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {(stores ?? []).map((s) => {
           const bal = balanceByStore[s.id] ?? 0;
           return (
@@ -120,7 +134,7 @@ export default async function CashPage() {
                       return (
                         <tr key={m.id} className={`hover:bg-zinc-50 ${m.ref_table ? "bg-zinc-50/50" : ""}`}>
                           <td className="px-4 py-2 tabular-nums text-zinc-700">{m.move_date}</td>
-                          <td className="px-4 py-2 text-zinc-600">{storeName(s, nameField)}</td>
+                          <td className="px-4 py-2 text-zinc-600">{m.store_id ? storeName(s, nameField) : "Quỹ chung"}</td>
                           <td className="px-4 py-2">
                             <span className={`text-xs rounded px-1.5 py-0.5 ${isIn ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
                               {catLabel}
@@ -137,7 +151,7 @@ export default async function CashPage() {
                           </td>
                           <td className="px-4 py-2">
                             <CashRowActions
-                              row={{ id: m.id, move_date: m.move_date, store_id: m.store_id, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null, ref_table: m.ref_table ?? null }}
+                              row={{ id: m.id, move_date: m.move_date, store_id: m.store_id ?? null, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null, ref_table: m.ref_table ?? null }}
                               stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
                               dict={dict}
                             />
