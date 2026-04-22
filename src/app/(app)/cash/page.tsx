@@ -53,8 +53,8 @@ export default async function CashPage() {
       <h1 className="text-2xl font-bold text-zinc-900">{dict.nav.cash}</h1>
 
       {/* Balance summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        <Card className="sm:col-span-2 lg:col-span-1 bg-zinc-900 text-white border-0">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+        <Card className="col-span-2 sm:col-span-1 bg-zinc-900 text-white border-0">
           <CardContent>
             <div className="text-xs text-zinc-400">{dict.dashboard.totalCash}</div>
             <div className="mt-1 text-2xl font-bold tabular-nums">{formatYen(totalCash)}</div>

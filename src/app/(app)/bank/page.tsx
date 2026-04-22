@@ -19,7 +19,7 @@ export default async function BankPage() {
     supabase.from("user_profiles").select("role, store_id").eq("id", user!.id).single(),
     supabase
       .from("bank_transactions")
-      .select("id, tx_date, direction, category, payment_method, amount, fee, vendor, note")
+      .select("id, tx_date, direction, category, payment_method, amount, fee, vendor, note, ref_table")
       .order("tx_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(80),
@@ -89,12 +89,17 @@ export default async function BankPage() {
                       const isIn = t.direction === "in";
                       const catLabel = (dict.bank[catKey(t.category)] as string | undefined) ?? t.category;
                       return (
-                        <tr key={t.id} className="hover:bg-zinc-50">
+                        <tr key={t.id} className={`hover:bg-zinc-50 ${t.ref_table ? "bg-zinc-50/50" : ""}`}>
                           <td className="px-4 py-2 tabular-nums text-zinc-700">{t.tx_date}</td>
                           <td className="px-4 py-2">
                             <span className={`text-xs rounded px-1.5 py-0.5 ${isIn ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
                               {catLabel}
                             </span>
+                            {t.ref_table && (
+                              <span className="ml-1 text-xs rounded px-1 py-0.5 bg-zinc-100 text-zinc-400">
+                                {dict.cash.autoEntry}
+                              </span>
+                            )}
                           </td>
                           <td className="px-4 py-2 text-zinc-600 text-xs max-w-[140px] truncate">{t.vendor ?? t.note ?? "—"}</td>
                           <td className="px-4 py-2 text-right tabular-nums text-zinc-400 text-xs">
@@ -105,7 +110,7 @@ export default async function BankPage() {
                           </td>
                           <td className="px-4 py-2">
                             <BankRowActions
-                              row={{ id: t.id, tx_date: t.tx_date, direction: t.direction as "in" | "out", category: t.category, payment_method: t.payment_method, amount: t.amount, fee: t.fee ?? 0, vendor: t.vendor ?? null, note: t.note ?? null }}
+                              row={{ id: t.id, tx_date: t.tx_date, direction: t.direction as "in" | "out", category: t.category, payment_method: t.payment_method, amount: t.amount, fee: t.fee ?? 0, vendor: t.vendor ?? null, note: t.note ?? null, ref_table: t.ref_table ?? null }}
                               dict={dict}
                             />
                           </td>

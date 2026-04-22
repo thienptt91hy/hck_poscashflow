@@ -19,6 +19,7 @@ interface Row {
   fee: number;
   vendor: string | null;
   note: string | null;
+  ref_table: string | null;
 }
 
 export function BankRowActions({ row, dict }: { row: Row; dict: Dictionary }) {
@@ -73,6 +74,14 @@ export function BankRowActions({ row, dict }: { row: Row; dict: Dictionary }) {
       router.refresh();
     });
   };
+
+  if (row.ref_table) {
+    return (
+      <div className="text-center">
+        <span className="text-xs text-zinc-300" title="Tự động từ giao dịch nguồn — sửa tại nguồn để cập nhật">🔒</span>
+      </div>
+    );
+  }
 
   return (
     <>
