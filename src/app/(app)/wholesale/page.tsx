@@ -4,7 +4,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WholesaleForm } from "./wholesale-form";
-import { WholesaleMarkPaid } from "./wholesale-mark-paid";
+import { WholesaleRowActions } from "./wholesale-row-actions";
 import { PlusCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -98,11 +98,11 @@ export default async function WholesalePage() {
                         <td className="px-4 py-2 text-zinc-500 text-xs tabular-nums">{o.due_date ?? "—"}</td>
                         <td className="px-4 py-2 text-right font-semibold tabular-nums">{formatYen(o.amount)}</td>
                         <td className="px-4 py-2 text-center">
-                          {o.paid ? (
-                            <span className="text-xs rounded px-1.5 py-0.5 bg-emerald-100 text-emerald-700">{dict.wholesale.paid}</span>
-                          ) : (
-                            <WholesaleMarkPaid id={o.id} dict={dict} />
-                          )}
+                          {o.paid && <span className="text-xs rounded px-1.5 py-0.5 bg-emerald-100 text-emerald-700 mr-1">{dict.wholesale.paid}</span>}
+                          <WholesaleRowActions
+                            row={{ id: o.id, sale_date: o.sale_date, customer_company: o.customer_company, amount: o.amount, payment_method: o.payment_method, paid: o.paid, due_date: o.due_date ?? null, note: o.note ?? null }}
+                            dict={dict}
+                          />
                         </td>
                       </tr>
                     ))}

@@ -4,6 +4,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BankForm } from "./bank-form";
+import { BankRowActions } from "./bank-row-actions";
 import { PlusCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -77,11 +78,12 @@ export default async function BankPage() {
                       <th className="px-4 py-2.5 text-left">{dict.bank.vendor}</th>
                       <th className="px-4 py-2.5 text-right">{dict.bank.fee}</th>
                       <th className="px-4 py-2.5 text-right">{dict.common.amount}</th>
+                      <th className="px-4 py-2.5 w-20"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                     {(!txs || txs.length === 0) && (
-                      <tr><td colSpan={5} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
                     )}
                     {(txs ?? []).map((t) => {
                       const isIn = t.direction === "in";
@@ -100,6 +102,12 @@ export default async function BankPage() {
                           </td>
                           <td className={`px-4 py-2 text-right font-semibold tabular-nums ${isIn ? "text-emerald-700" : "text-red-600"}`}>
                             {isIn ? "+" : "−"}{formatYen(t.amount)}
+                          </td>
+                          <td className="px-4 py-2">
+                            <BankRowActions
+                              row={{ id: t.id, tx_date: t.tx_date, direction: t.direction as "in" | "out", category: t.category, payment_method: t.payment_method, amount: t.amount, fee: t.fee ?? 0, vendor: t.vendor ?? null, note: t.note ?? null }}
+                              dict={dict}
+                            />
                           </td>
                         </tr>
                       );

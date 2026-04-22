@@ -4,6 +4,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CashForm } from "./cash-form";
+import { CashRowActions } from "./cash-row-actions";
 import { PlusCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -104,11 +105,12 @@ export default async function CashPage() {
                       <th className="px-4 py-2.5 text-left">{dict.cash.category}</th>
                       <th className="px-4 py-2.5 text-left">{dict.common.notes}</th>
                       <th className="px-4 py-2.5 text-right">{dict.cash.amount}</th>
+                      <th className="px-4 py-2.5 w-20"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                     {(!movements || movements.length === 0) && (
-                      <tr><td colSpan={5} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
                     )}
                     {(movements ?? []).map((m) => {
                       const s = m.stores as unknown as Store | null;
@@ -127,6 +129,13 @@ export default async function CashPage() {
                           <td className="px-4 py-2 text-zinc-500 text-xs max-w-[120px] truncate">{m.note ?? ""}</td>
                           <td className={`px-4 py-2 text-right font-semibold tabular-nums ${isIn ? "text-emerald-700" : "text-red-600"}`}>
                             {isIn ? "+" : "−"}{formatYen(m.amount)}
+                          </td>
+                          <td className="px-4 py-2">
+                            <CashRowActions
+                              row={{ id: m.id, move_date: m.move_date, store_id: m.store_id, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null }}
+                              stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
+                              dict={dict}
+                            />
                           </td>
                         </tr>
                       );

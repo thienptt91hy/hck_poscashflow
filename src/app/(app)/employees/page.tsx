@@ -3,6 +3,7 @@ import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmployeeForm } from "./employee-form";
+import { EmployeeRowActions } from "./employee-row-actions";
 import { PlusCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +14,11 @@ export default async function EmployeesPage() {
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
 
-  const [{ data: stores }, { data: employees }] = await Promise.all([
+  const [{ data: profile }, { data: stores }, { data: employees }] = await Promise.all([
+    supabase.from("user_profiles").select("role").eq("id", user!.id).single(),
     supabase.from("stores").select("id, name_vi, name_ja, name_en").eq("active", true).order("sort_order"),
     supabase
       .from("employees")
@@ -23,6 +26,8 @@ export default async function EmployeesPage() {
       .order("active", { ascending: false })
       .order("name"),
   ]);
+
+  const userRole = profile?.role ?? "staff";
 
   const sName = (s: Store | null) => (s?.[nameField as "name_vi"] as string | null) ?? s?.name_vi ?? "—";
 
@@ -39,10 +44,11 @@ export default async function EmployeesPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <EmployeeForm
-                dict={dict}
-                stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))}
-              />
+              {userRole === "admin" ? (
+                <EmployeeForm dict={dict} stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))} />
+              ) : (
+                <p className="text-sm text-zinc-400">Chỉ Admin mới có thể thêm nhân viên.</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -58,11 +64,12 @@ export default async function EmployeesPage() {
                     <th className="px-4 py-2.5 text-left">{dict.common.store}</th>
                     <th className="px-4 py-2.5 text-left">{dict.employees.position}</th>
                     <th className="px-4 py-2.5 text-left">{dict.employees.status}</th>
+                    {userRole === "admin" && <th className="px-4 py-2.5 w-20"></th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
                   {(!employees || employees.length === 0) && (
-                    <tr><td colSpan={4} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
+                    <tr><td colSpan={5} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
                   )}
                   {(employees ?? []).map((emp) => {
                     const s = emp.stores as unknown as Store | null;
@@ -76,6 +83,16 @@ export default async function EmployeesPage() {
                             {emp.active ? dict.common.active : dict.common.inactive}
                           </span>
                         </td>
+                        {userRole === "admin" && (
+                          <td className="px-4 py-2.5">
+                            <EmployeeRowActions
+                              row={{ id: emp.id, name: emp.name, store_id: emp.store_id, position: emp.position ?? null, active: emp.active }}
+                              stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))}
+                              dict={dict}
+                              role={userRole}
+                            />
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

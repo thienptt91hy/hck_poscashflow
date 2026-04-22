@@ -4,6 +4,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExpenseForm } from "./expense-form";
+import { ExpenseRowActions } from "./expense-row-actions";
 import { PlusCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -97,18 +98,19 @@ export default async function ExpensesPage() {
                       <th className="px-4 py-2.5 text-left">{dict.expenses.paidFrom}</th>
                       <th className="px-4 py-2.5 text-left">{dict.common.notes}</th>
                       <th className="px-4 py-2.5 text-right">{dict.common.amount}</th>
+                      <th className="px-4 py-2.5 w-20"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                     {(!varExp || varExp.length === 0) && (
-                      <tr><td colSpan={6} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
+                      <tr><td colSpan={7} className="px-4 py-8 text-center text-zinc-400">{dict.common.empty}</td></tr>
                     )}
                     {(varExp ?? []).map((exp) => {
                       const s = exp.stores as unknown as Store | null;
                       return (
                         <tr key={exp.id} className="hover:bg-zinc-50">
                           <td className="px-4 py-2 tabular-nums">{exp.expense_date}</td>
-                          <td className="px-4 py-2 text-zinc-500">{sName(s) === "—" ? "全体" : sName(s)}</td>
+                          <td className="px-4 py-2 text-zinc-500">{sName(s) || "—"}</td>
                           <td className="px-4 py-2 text-xs text-zinc-600">{exp.category ?? "—"}</td>
                           <td className="px-4 py-2">
                             <span className={`text-xs rounded px-1.5 py-0.5 ${exp.paid_from === "cash" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"}`}>
@@ -117,6 +119,13 @@ export default async function ExpensesPage() {
                           </td>
                           <td className="px-4 py-2 text-zinc-500 text-xs max-w-[100px] truncate">{exp.note ?? ""}</td>
                           <td className="px-4 py-2 text-right font-semibold tabular-nums text-red-600">{formatYen(exp.amount)}</td>
+                          <td className="px-4 py-2">
+                            <ExpenseRowActions
+                              row={{ id: exp.id, expense_date: exp.expense_date, store_id: exp.store_id ?? null, category: exp.category ?? "", amount: exp.amount, paid_from: exp.paid_from as "cash" | "bank", note: exp.note ?? null }}
+                              stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))}
+                              dict={dict}
+                            />
+                          </td>
                         </tr>
                       );
                     })}
