@@ -23,6 +23,11 @@ function getPeriodRange(period: Period) {
   const prevMonthEndDate = subDays(parseISO(thisMonthStart), 1);
   const prevMonthStart = formatInTimeZone(prevMonthEndDate, TZ, "yyyy-MM-01");
 
+  // Last day of current month (consistent with monthly report which uses < first day of next month)
+  const [yr, mo] = thisMonthStart.split("-").map(Number);
+  const nextMonthStr = mo === 12 ? `${yr + 1}-01-01` : `${yr}-${String(mo + 1).padStart(2, "0")}-01`;
+  const thisMonthEnd = fmt(subDays(parseISO(nextMonthStr), 1));
+
   switch (period) {
     case "today":
       return { start: today, end: today };
@@ -34,8 +39,8 @@ function getPeriodRange(period: Period) {
       return { start: fmt(subDays(now, 6)), end: today };
     case "last_month":
       return { start: prevMonthStart, end: fmt(prevMonthEndDate) };
-    default: // this_month
-      return { start: thisMonthStart, end: today };
+    default: // this_month — full month (same range as monthly report)
+      return { start: thisMonthStart, end: thisMonthEnd };
   }
 }
 
