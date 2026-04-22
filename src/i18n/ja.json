@@ -37,7 +37,8 @@
     "category": "カテゴリ", "amount": "金額",
     "cat_sales": "売上", "cat_cod": "代引き", "cat_purchase": "仕入",
     "cat_staff_take": "スタッフ持帰", "cat_deposit_to_bank": "銀行入金",
-    "cat_adjust": "調整", "cat_other": "その他", "depositFee": "入金手数料(¥110)"
+    "cat_salary": "給与",
+    "cat_adjust": "調整", "cat_other": "その他", "depositFee": "入金手数料", "autoEntry": "自動"
   },
   "bank": {
     "title": "銀行", "newTx": "取引追加", "ledger": "銀行台帳",

@@ -16,9 +16,10 @@ interface Row {
   paid: boolean;
   due_date: string | null;
   note: string | null;
+  store_id: string | null;
 }
 
-export function WholesaleRowActions({ row, dict }: { row: Row; dict: Dictionary }) {
+export function WholesaleRowActions({ row, stores, dict }: { row: Row; stores: { id: string; name: string }[]; dict: Dictionary }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [showEdit, setShowEdit] = useState(false);
@@ -28,6 +29,7 @@ export function WholesaleRowActions({ row, dict }: { row: Row; dict: Dictionary 
   const [company, setCompany] = useState(row.customer_company);
   const [amount, setAmount] = useState(String(row.amount));
   const [method, setMethod] = useState(row.payment_method);
+  const [storeId, setStoreId] = useState(row.store_id ?? (stores[0]?.id ?? ""));
   const [paid, setPaid] = useState(row.paid);
   const [dueDate, setDueDate] = useState(row.due_date ?? "");
   const [note, setNote] = useState(row.note ?? "");
@@ -36,7 +38,8 @@ export function WholesaleRowActions({ row, dict }: { row: Row; dict: Dictionary 
 
   const openEdit = () => {
     setDate(row.sale_date); setCompany(row.customer_company); setAmount(String(row.amount));
-    setMethod(row.payment_method); setPaid(row.paid); setDueDate(row.due_date ?? ""); setNote(row.note ?? "");
+    setMethod(row.payment_method); setStoreId(row.store_id ?? (stores[0]?.id ?? ""));
+    setPaid(row.paid); setDueDate(row.due_date ?? ""); setNote(row.note ?? "");
     setShowEdit(true);
   };
 
@@ -47,6 +50,7 @@ export function WholesaleRowActions({ row, dict }: { row: Row; dict: Dictionary 
       await createClient().from("wholesale_sales").update({
         sale_date: date, customer_company: company.trim(),
         amount: val, payment_method: method,
+        store_id: method === "cash" ? (storeId || null) : null,
         paid, due_date: dueDate || null, note: note || null,
       }).eq("id", row.id);
       setShowEdit(false);
@@ -139,6 +143,15 @@ export function WholesaleRowActions({ row, dict }: { row: Row; dict: Dictionary 
                   </select>
                 </div>
               </div>
+              {method === "cash" && stores.length > 0 && (
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-zinc-700">{dict.common.store}</label>
+                  <select value={storeId} onChange={(e) => setStoreId(e.target.value)}
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+              )}
               <label className="flex items-center gap-2 text-sm cursor-pointer">
                 <input type="checkbox" checked={paid} onChange={(e) => setPaid(e.target.checked)} className="h-4 w-4 rounded border-zinc-300" />
                 <span>{dict.wholesale.paid}</span>

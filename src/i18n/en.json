@@ -37,7 +37,8 @@
     "category": "Category", "amount": "Amount",
     "cat_sales": "Sales", "cat_cod": "COD", "cat_purchase": "Purchase",
     "cat_staff_take": "Staff take", "cat_deposit_to_bank": "Deposit to bank",
-    "cat_adjust": "Adjustment", "cat_other": "Other", "depositFee": "Deposit fee (¥110)"
+    "cat_salary": "Salary",
+    "cat_adjust": "Adjustment", "cat_other": "Other", "depositFee": "Deposit fee", "autoEntry": "Auto"
   },
   "bank": {
     "title": "Bank", "newTx": "Add transaction", "ledger": "Bank ledger",

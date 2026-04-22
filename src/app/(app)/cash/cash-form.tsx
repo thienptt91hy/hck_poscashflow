@@ -32,6 +32,7 @@ export function CashForm({
   const [direction, setDirection] = useState<"in" | "out">("out");
   const [category, setCategory] = useState<string>("purchase");
   const [amount, setAmount] = useState("");
+  const [depositFee, setDepositFee] = useState("110");
   const [note, setNote] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,12 +61,14 @@ export function CashForm({
         direction,
         category,
         amount: Math.round(Number(amount)),
+        deposit_fee: category === "deposit_to_bank" ? (Math.round(Number(depositFee)) || 0) : 0,
         note: note || null,
         created_by: profile.id,
       });
       if (error) { setError(error.message); return; }
       setSuccess(true);
       setAmount("");
+      setDepositFee("110");
       setNote("");
       router.refresh();
     });
@@ -136,6 +139,25 @@ export function CashForm({
           />
         </div>
       </div>
+
+      {category === "deposit_to_bank" && (
+        <div className="space-y-1">
+          <Label>{dict.cash.depositFee}</Label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-3 flex items-center text-zinc-400">¥</span>
+            <Input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              step={1}
+              value={depositFee}
+              onChange={(e) => setDepositFee(e.target.value)}
+              className="pl-7 text-right tabular-nums"
+            />
+          </div>
+          <p className="text-xs text-zinc-400">Phí này sẽ được trừ vào số tiền vào ngân hàng</p>
+        </div>
+      )}
 
       <div className="space-y-1">
         <Label>{dict.common.notes}</Label>

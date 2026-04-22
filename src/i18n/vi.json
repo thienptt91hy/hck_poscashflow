@@ -37,7 +37,8 @@
     "category": "Danh mục", "amount": "Số tiền",
     "cat_sales": "Doanh thu", "cat_cod": "COD (代引き)", "cat_purchase": "Mua vật dụng",
     "cat_staff_take": "NV mang về", "cat_deposit_to_bank": "Nộp ngân hàng",
-    "cat_adjust": "Điều chỉnh", "cat_other": "Khác", "depositFee": "Phí nộp (¥110)"
+    "cat_salary": "Lương nhân viên",
+    "cat_adjust": "Điều chỉnh", "cat_other": "Khác", "depositFee": "Phí nộp", "autoEntry": "Tự động"
   },
   "bank": {
     "title": "Ngân hàng", "newTx": "Thêm giao dịch", "ledger": "Sổ ngân hàng",

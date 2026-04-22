@@ -12,13 +12,14 @@ import type { Dictionary } from "@/i18n/dictionaries";
 
 const METHODS = ["bank_transfer", "cash", "qr_card", "credit_card"] as const;
 
-export function WholesaleForm({ dict, userId }: { dict: Dictionary; userId: string }) {
+export function WholesaleForm({ dict, userId, stores }: { dict: Dictionary; userId: string; stores: { id: string; name: string }[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [date, setDate] = useState(todayJST());
   const [company, setCompany] = useState("");
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState<string>("bank_transfer");
+  const [storeId, setStoreId] = useState(stores[0]?.id ?? "");
   const [dueDate, setDueDate] = useState("");
   const [note, setNote] = useState("");
   const [success, setSuccess] = useState(false);
@@ -39,6 +40,7 @@ export function WholesaleForm({ dict, userId }: { dict: Dictionary; userId: stri
         customer_company: company.trim(),
         amount: Math.round(Number(amount)),
         payment_method: method,
+        store_id: method === "cash" ? (storeId || null) : null,
         paid: false,
         due_date: dueDate || null,
         note: note || null,
@@ -50,6 +52,7 @@ export function WholesaleForm({ dict, userId }: { dict: Dictionary; userId: stri
       setAmount("");
       setDueDate("");
       setNote("");
+      setStoreId(stores[0]?.id ?? "");
       router.refresh();
     });
   };
@@ -79,6 +82,16 @@ export function WholesaleForm({ dict, userId }: { dict: Dictionary; userId: stri
           {METHODS.map((m) => <option key={m} value={m}>{(dict.wholesale[mKey(m)] as string | undefined) ?? m}</option>)}
         </Select>
       </div>
+      {method === "cash" && stores.length > 0 && (
+        <div className="space-y-1">
+          <Label>{dict.common.store}</Label>
+          <Select value={storeId} onChange={(e) => setStoreId(e.target.value)}>
+            {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </Select>
+          <p className="text-xs text-zinc-400">Tiền mặt sẽ được cộng vào quỹ cửa hàng này</p>
+        </div>
+      )}
+
       <div className="space-y-1">
         <Label>{dict.wholesale.dueDate}</Label>
         <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />

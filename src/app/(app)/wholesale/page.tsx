@@ -13,14 +13,23 @@ export default async function WholesalePage() {
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
+  const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: orders } = await supabase
-    .from("wholesale_sales")
-    .select("id, sale_date, customer_company, amount, payment_method, paid, due_date, note")
-    .order("sale_date", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(80);
+  const [{ data: orders }, { data: stores }] = await Promise.all([
+    supabase
+      .from("wholesale_sales")
+      .select("id, sale_date, customer_company, amount, payment_method, paid, due_date, note, store_id")
+      .order("sale_date", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(80),
+    supabase.from("stores").select("id, name_vi, name_ja, name_en").eq("active", true).order("sort_order"),
+  ]);
+
+  const storeOpts = (stores ?? []).map((s) => ({
+    id: s.id,
+    name: (s[nameField as "name_vi"] as string | null) ?? s.name_vi,
+  }));
 
   const totalRevenue = (orders ?? []).reduce((s, o) => s + o.amount, 0);
   const unpaidTotal = (orders ?? []).filter((o) => !o.paid).reduce((s, o) => s + o.amount, 0);
@@ -63,7 +72,7 @@ export default async function WholesalePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <WholesaleForm dict={dict} userId={user!.id} />
+              <WholesaleForm dict={dict} userId={user!.id} stores={storeOpts} />
             </CardContent>
           </Card>
         </div>
@@ -100,7 +109,8 @@ export default async function WholesalePage() {
                         <td className="px-4 py-2 text-center">
                           {o.paid && <span className="text-xs rounded px-1.5 py-0.5 bg-emerald-100 text-emerald-700 mr-1">{dict.wholesale.paid}</span>}
                           <WholesaleRowActions
-                            row={{ id: o.id, sale_date: o.sale_date, customer_company: o.customer_company, amount: o.amount, payment_method: o.payment_method, paid: o.paid, due_date: o.due_date ?? null, note: o.note ?? null }}
+                            row={{ id: o.id, sale_date: o.sale_date, customer_company: o.customer_company, amount: o.amount, payment_method: o.payment_method, paid: o.paid, due_date: o.due_date ?? null, note: o.note ?? null, store_id: o.store_id ?? null }}
+                            stores={storeOpts}
                             dict={dict}
                           />
                         </td>

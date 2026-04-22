@@ -28,7 +28,7 @@ export default async function CashPage() {
     supabase.from("user_profiles").select("role, store_id").eq("id", user!.id).single(),
     supabase
       .from("cash_movements")
-      .select("id, move_date, store_id, direction, category, amount, note, stores(name_vi, name_ja, name_en)")
+      .select("id, move_date, store_id, direction, category, amount, note, ref_table, stores(name_vi, name_ja, name_en)")
       .order("move_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(80),
@@ -118,13 +118,18 @@ export default async function CashPage() {
                       const catKey = `cat_${m.category}` as keyof typeof dict.cash;
                       const catLabel = (dict.cash[catKey] as string | undefined) ?? m.category;
                       return (
-                        <tr key={m.id} className="hover:bg-zinc-50">
+                        <tr key={m.id} className={`hover:bg-zinc-50 ${m.ref_table ? "bg-zinc-50/50" : ""}`}>
                           <td className="px-4 py-2 tabular-nums text-zinc-700">{m.move_date}</td>
                           <td className="px-4 py-2 text-zinc-600">{storeName(s, nameField)}</td>
                           <td className="px-4 py-2">
                             <span className={`text-xs rounded px-1.5 py-0.5 ${isIn ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
                               {catLabel}
                             </span>
+                            {m.ref_table && (
+                              <span className="ml-1 text-xs rounded px-1 py-0.5 bg-zinc-100 text-zinc-400">
+                                {dict.cash.autoEntry}
+                              </span>
+                            )}
                           </td>
                           <td className="px-4 py-2 text-zinc-500 text-xs max-w-[120px] truncate">{m.note ?? ""}</td>
                           <td className={`px-4 py-2 text-right font-semibold tabular-nums ${isIn ? "text-emerald-700" : "text-red-600"}`}>
@@ -132,7 +137,7 @@ export default async function CashPage() {
                           </td>
                           <td className="px-4 py-2">
                             <CashRowActions
-                              row={{ id: m.id, move_date: m.move_date, store_id: m.store_id, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null }}
+                              row={{ id: m.id, move_date: m.move_date, store_id: m.store_id, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null, ref_table: m.ref_table ?? null }}
                               stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
                               dict={dict}
                             />
