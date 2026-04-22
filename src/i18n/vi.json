@@ -90,9 +90,14 @@
     "assignStore": "Cửa hàng phụ trách", "updateRole": "Cập nhật quyền"
   },
   "dashboard": {
-    "title": "Tổng quan", "revenueThisMonth": "Doanh thu tháng", "revenueToday": "Doanh thu hôm nay",
-    "totalCash": "Tiền mặt hiện có", "bankBalance": "Số dư ngân hàng",
-    "expensesThisMonth": "Chi phí tháng", "profit": "Lợi nhuận",
-    "last30Days": "30 ngày gần nhất", "byStore": "Theo cửa hàng", "paymentMix": "Cơ cấu thanh toán"
+    "title": "Tổng quan",
+    "revenue": "Doanh thu", "customers": "Lượt khách", "avgPerCustomer": "TB/khách",
+    "expenses": "Chi phí", "profit": "Lợi nhuận", "currentBalance": "Số dư tổng",
+    "totalCash": "Tiền mặt", "bankBalance": "Ngân hàng",
+    "vsPrev": "so với kỳ trước", "last7Days": "7 ngày",
+    "revenueTrend": "Xu hướng doanh thu", "revenueByStore": "Doanh thu theo cửa hàng",
+    "paymentMix": "Cơ cấu thanh toán", "noData": "Chưa có dữ liệu trong kỳ này",
+    "revenueThisMonth": "Doanh thu tháng", "revenueToday": "Doanh thu hôm nay",
+    "expensesThisMonth": "Chi phí tháng", "last30Days": "30 ngày gần nhất", "byStore": "Theo cửa hàng"
   }
 }

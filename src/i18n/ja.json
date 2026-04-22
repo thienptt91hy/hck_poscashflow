@@ -84,8 +84,14 @@
     "assignStore": "担当店舗", "updateRole": "権限更新"
   },
   "dashboard": {
-    "title": "ダッシュボード", "revenueThisMonth": "今月の売上", "revenueToday": "本日の売上",
-    "totalCash": "現金残高", "bankBalance": "銀行残高", "expensesThisMonth": "今月の経費",
-    "profit": "利益", "last30Days": "直近30日", "byStore": "店舗別", "paymentMix": "支払い構成"
+    "title": "ダッシュボード",
+    "revenue": "売上", "customers": "来客数", "avgPerCustomer": "平均客単価",
+    "expenses": "経費", "profit": "利益", "currentBalance": "残高合計",
+    "totalCash": "現金", "bankBalance": "銀行",
+    "vsPrev": "前期比", "last7Days": "7日間",
+    "revenueTrend": "売上推移", "revenueByStore": "店舗別売上",
+    "paymentMix": "支払い構成", "noData": "この期間のデータなし",
+    "revenueThisMonth": "今月の売上", "revenueToday": "本日の売上",
+    "expensesThisMonth": "今月の経費", "last30Days": "直近30日", "byStore": "店舗別"
   }
 }

@@ -84,8 +84,14 @@
     "assignStore": "Assigned store", "updateRole": "Update role"
   },
   "dashboard": {
-    "title": "Dashboard", "revenueThisMonth": "Revenue (month)", "revenueToday": "Revenue today",
-    "totalCash": "Cash on hand", "bankBalance": "Bank balance", "expensesThisMonth": "Expenses (month)",
-    "profit": "Profit", "last30Days": "Last 30 days", "byStore": "By store", "paymentMix": "Payment mix"
+    "title": "Dashboard",
+    "revenue": "Revenue", "customers": "Visitors", "avgPerCustomer": "Avg/visit",
+    "expenses": "Expenses", "profit": "Profit", "currentBalance": "Total balance",
+    "totalCash": "Cash", "bankBalance": "Bank",
+    "vsPrev": "vs prev period", "last7Days": "7 days",
+    "revenueTrend": "Revenue trend", "revenueByStore": "Revenue by store",
+    "paymentMix": "Payment mix", "noData": "No data for this period",
+    "revenueThisMonth": "Revenue (month)", "revenueToday": "Revenue today",
+    "expensesThisMonth": "Expenses (month)", "last30Days": "Last 30 days", "byStore": "By store"
   }
 }
