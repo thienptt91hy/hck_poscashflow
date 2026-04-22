@@ -71,10 +71,11 @@ export default async function SalaryPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {userRole !== "admin" && (
-                <p className="text-sm text-zinc-400 mb-3">Chỉ Admin mới có thể ghi lương.</p>
+              {userRole !== "admin" ? (
+                <p className="text-sm text-zinc-400">Chỉ Admin mới có thể ghi lương.</p>
+              ) : (
+                <SalaryForm dict={dict} userId={user!.id} employees={empOpts} />
               )}
-              <SalaryForm dict={dict} userId={user!.id} employees={empOpts} />
             </CardContent>
           </Card>
         </div>

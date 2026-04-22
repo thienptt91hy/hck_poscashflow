@@ -22,7 +22,7 @@ export function PeriodSelector({
       {periods.map((p) => (
         <button
           key={p.key}
-          onClick={() => router.push(`/dashboard?period=${p.key}`)}
+          onClick={() => router.replace(`/dashboard?period=${p.key}`)}
           className={cn(
             "rounded-lg px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap touch-manipulation",
             p.key === current

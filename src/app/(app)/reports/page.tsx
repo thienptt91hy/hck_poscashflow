@@ -108,6 +108,7 @@ export default async function ReportsPage({
       <Card>
         <CardHeader><CardTitle>{dict.reports.revenueByStore}</CardTitle></CardHeader>
         <CardContent className="p-0">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-zinc-50 text-xs uppercase text-zinc-500">
               <tr>
@@ -147,6 +148,7 @@ export default async function ReportsPage({
               </tr>
             </tbody>
           </table>
+          </div>
         </CardContent>
       </Card>
 

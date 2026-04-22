@@ -19,7 +19,7 @@ interface Row {
 
 export function SalaryRowActions({ row, employees, dict, role }: {
   row: Row;
-  employees: { id: string; name: string; store_name: string }[];
+  employees: { id: string; name: string; store_id: string; store_name: string }[];
   dict: Dictionary;
   role: UserRole;
 }) {
@@ -52,10 +52,10 @@ export function SalaryRowActions({ row, employees, dict, role }: {
       await createClient().from("salary_payments").update({
         period_month: period + "-01",
         employee_id: employeeId,
+        store_id: emp?.store_id,
         amount: val,
         payment_method: method,
         note: note || null,
-        ...(emp ? {} : {}),
       }).eq("id", row.id);
       setShowEdit(false);
       router.refresh();

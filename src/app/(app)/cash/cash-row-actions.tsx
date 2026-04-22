@@ -39,8 +39,11 @@ export function CashRowActions({ row, stores, dict }: {
   const catKey = (c: string) => `cat_${c}` as keyof typeof dict.cash;
 
   const openEdit = () => {
-    setDate(row.move_date); setStoreId(row.store_id); setDirection(row.direction);
-    setCategory(row.category); setAmount(String(row.amount)); setNote(row.note ?? "");
+    const dir = row.direction;
+    const validCats = dir === "in" ? (IN_CATS as readonly string[]) : (OUT_CATS as readonly string[]);
+    const cat = validCats.includes(row.category) ? row.category : (dir === "in" ? "sales" : "purchase");
+    setDate(row.move_date); setStoreId(row.store_id); setDirection(dir);
+    setCategory(cat); setAmount(String(row.amount)); setNote(row.note ?? "");
     setShowEdit(true);
   };
 

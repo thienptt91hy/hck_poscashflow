@@ -68,11 +68,11 @@ export default async function SettingsPage() {
                 </tr>
               ))}
               <tr className="bg-zinc-50 font-semibold">
-                <td className="px-4 py-2.5">合計 / Tổng</td>
-                <td /><td />
+                <td colSpan={2} className="px-4 py-2.5">合計 / Tổng</td>
                 <td className="px-4 py-2.5 text-right tabular-nums text-red-700">
                   {formatYen((fixedExp ?? []).filter((f) => f.active).reduce((s, f) => s + f.amount, 0))}
                 </td>
+                <td />
               </tr>
             </tbody>
           </table>
