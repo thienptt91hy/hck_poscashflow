@@ -40,6 +40,7 @@ export default async function ExpensesPage() {
       <Card>
         <CardHeader><CardTitle>Chi phí cố định hàng tháng</CardTitle></CardHeader>
         <CardContent className="p-0">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <tbody className="divide-y divide-zinc-100">
               {(!fixedExp || fixedExp.length === 0) && (
@@ -63,6 +64,7 @@ export default async function ExpensesPage() {
               )}
             </tbody>
           </table>
+          </div>
         </CardContent>
       </Card>
 

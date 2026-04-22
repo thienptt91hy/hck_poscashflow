@@ -57,6 +57,7 @@ export default async function EmployeesPage() {
           <Card>
             <CardHeader><CardTitle>{dict.employees.title}</CardTitle></CardHeader>
             <CardContent className="p-0">
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-zinc-50 text-xs uppercase text-zinc-500">
                   <tr>
@@ -98,6 +99,7 @@ export default async function EmployeesPage() {
                   })}
                 </tbody>
               </table>
+              </div>
             </CardContent>
           </Card>
         </div>
