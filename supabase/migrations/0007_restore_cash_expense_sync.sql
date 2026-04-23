@@ -9,7 +9,8 @@
 --
 -- Fix:
 --   1. Restore fn_sync_expense with cash case (store_id from expense,
---      NULL = Quỹ chung)
+--      NULL = Quỹ chung). category = 'purchase' (enum); expense
+--      category text stored in note field.
 --   2. Backfill cash_movements for all cash expenses that have no entry
 -- ============================================================
 
@@ -26,8 +27,10 @@ BEGIN
     INSERT INTO public.cash_movements
       (move_date, store_id, direction, category, amount, note, ref_table, ref_id)
     VALUES
-      (NEW.expense_date, NEW.store_id, 'out', COALESCE(NEW.category, 'Chi phí'),
-       NEW.amount, COALESCE(NEW.note, 'Chi phí phát sinh'), 'variable_expenses', NEW.id);
+      (NEW.expense_date, NEW.store_id, 'out', 'purchase',
+       NEW.amount,
+       COALESCE(NEW.note, '') || CASE WHEN NEW.note IS NOT NULL AND NEW.category IS NOT NULL THEN ' · ' ELSE '' END || COALESCE(NEW.category, 'Chi phí phát sinh'),
+       'variable_expenses', NEW.id);
 
   ELSIF NEW.paid_from = 'bank' THEN
     INSERT INTO public.bank_transactions
@@ -48,9 +51,9 @@ SELECT
   ve.expense_date,
   ve.store_id,
   'out',
-  COALESCE(ve.category, 'Chi phí'),
+  'purchase'::public.cash_category,
   ve.amount,
-  COALESCE(ve.note, 'Chi phí phát sinh'),
+  COALESCE(ve.note, '') || CASE WHEN ve.note IS NOT NULL AND ve.category IS NOT NULL THEN ' · ' ELSE '' END || COALESCE(ve.category, 'Chi phí phát sinh'),
   'variable_expenses',
   ve.id
 FROM public.variable_expenses ve
