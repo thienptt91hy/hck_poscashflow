@@ -49,11 +49,19 @@ export function BankForm({
   const catKey = (c: string) => `cat_${c}` as keyof Dictionary["bank"];
   const methodKey = (m: string) => `method_${m}` as keyof Dictionary["bank"];
 
+  const feeAmount = addFee ? 110 : (Number(fee) || 0);
+  const grossAmount = Math.round(Number(amount)) || 0;
+  // For "in": store NET amount (gross - fee) — consistent with auto-generated trigger entries
+  const netAmount = direction === "in" ? Math.max(1, grossAmount - feeAmount) : grossAmount;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
-    if (!amount || Number(amount) <= 0) { setError(dict.common.error); return; }
+    if (!amount || grossAmount <= 0) { setError(dict.common.error); return; }
+    if (direction === "in" && feeAmount >= grossAmount) {
+      setError("Phí không được lớn hơn hoặc bằng số tiền."); return;
+    }
 
     startTransition(async () => {
       const supabase = createClient();
@@ -62,8 +70,8 @@ export function BankForm({
         direction,
         category,
         payment_method: method,
-        amount: Math.round(Number(amount)),
-        fee: addFee ? 110 : (Number(fee) || 0),
+        amount: netAmount,
+        fee: feeAmount,
         vendor: vendor || null,
         note: note || null,
         created_by: profile.id,
@@ -141,6 +149,13 @@ export function BankForm({
             <Input type="number" inputMode="numeric" min={0} value={fee}
               onChange={(e) => setFee(e.target.value)} placeholder="0" className="pl-7 tabular-nums" />
           </div>
+        </div>
+      )}
+
+      {direction === "in" && feeAmount > 0 && grossAmount > 0 && (
+        <div className="rounded-md bg-blue-50 border border-blue-100 px-3 py-2 text-sm text-blue-700 flex items-center justify-between">
+          <span>Thực nhận vào ngân hàng:</span>
+          <span className="font-semibold tabular-nums">¥{netAmount.toLocaleString("en-US")}</span>
         </div>
       )}
 
