@@ -28,6 +28,7 @@
     "title": "Doanh thu hàng ngày", "newEntry": "Nhập doanh thu", "customerCount": "Số khách",
     "cash": "Tiền mặt", "qrCard": "QR / Thẻ", "bankTransfer": "Chuyển khoản",
     "cashExpense": "Tiền mặt TT hàng hóa",
+    "cashExpenseAdd": "Thêm khoản", "cashExpenseNotePlaceholder": "VD: mua gạo",
     "totalRevenue": "Tổng doanh thu", "avgPerCustomer": "TB/khách",
     "revenueStream": "Dòng doanh thu", "streamMain": "Chính (食事)", "streamCafe": "Cafe/Bánh mì",
     "saved": "Đã lưu doanh thu", "unit": { "customer": "khách", "yen": "¥" }

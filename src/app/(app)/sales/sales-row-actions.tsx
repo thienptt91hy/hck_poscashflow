@@ -20,7 +20,7 @@ interface SaleRow {
   cash: number;
   qr_card: number;
   bank_transfer: number;
-  cash_expense: number;
+  cash_expense_items: { amount: number; note: string | null }[];
   notes: string | null;
 }
 
@@ -46,8 +46,15 @@ export function SalesRowActions({
   const [cash, setCash] = useState(String(row.cash));
   const [qrCard, setQrCard] = useState(String(row.qr_card));
   const [bankTransfer, setBankTransfer] = useState(String(row.bank_transfer));
-  const [cashExpense, setCashExpense] = useState(String(row.cash_expense));
+  const [cashItems, setCashItems] = useState<{ note: string; amount: string }[]>(
+    (row.cash_expense_items ?? []).map((it) => ({ note: it.note ?? "", amount: String(it.amount) })),
+  );
   const [notes, setNotes] = useState(row.notes ?? "");
+
+  const addCashItem = () => setCashItems((p) => [...p, { note: "", amount: "" }]);
+  const removeCashItem = (i: number) => setCashItems((p) => p.filter((_, idx) => idx !== i));
+  const updateCashItem = (i: number, field: "note" | "amount", val: string) =>
+    setCashItems((p) => p.map((it, idx) => (idx === i ? { ...it, [field]: val } : it)));
 
   const selectedStore = stores.find((s) => s.id === storeId);
   const total = useMemo(
@@ -55,8 +62,8 @@ export function SalesRowActions({
       (Number(cash) || 0) +
       (Number(qrCard) || 0) +
       (Number(bankTransfer) || 0) +
-      (Number(cashExpense) || 0),
-    [cash, qrCard, bankTransfer, cashExpense],
+      cashItems.reduce((s, it) => s + (Number(it.amount) || 0), 0),
+    [cash, qrCard, bankTransfer, cashItems],
   );
 
   const openEdit = () => {
@@ -67,7 +74,7 @@ export function SalesRowActions({
     setCash(String(row.cash));
     setQrCard(String(row.qr_card));
     setBankTransfer(String(row.bank_transfer));
-    setCashExpense(String(row.cash_expense));
+    setCashItems((row.cash_expense_items ?? []).map((it) => ({ note: it.note ?? "", amount: String(it.amount) })));
     setNotes(row.notes ?? "");
     setShowEdit(true);
   };
@@ -83,7 +90,9 @@ export function SalesRowActions({
         cash: Number(cash) || 0,
         qr_card: Number(qrCard) || 0,
         bank_transfer: Number(bankTransfer) || 0,
-        cash_expense: Number(cashExpense) || 0,
+        cash_expense_items: cashItems
+          .filter((it) => (Number(it.amount) || 0) > 0)
+          .map((it) => ({ amount: Number(it.amount) || 0, note: it.note.trim() || null })),
         notes: notes || null,
       }).eq("id", row.id);
       setShowEdit(false);
@@ -225,7 +234,6 @@ export function SalesRowActions({
                   { label: "💵 " + dict.sales.cash, value: cash, setter: setCash, color: "text-emerald-700" },
                   { label: "💳 " + dict.sales.qrCard, value: qrCard, setter: setQrCard, color: "text-blue-700" },
                   { label: "🏦 " + dict.sales.bankTransfer, value: bankTransfer, setter: setBankTransfer, color: "text-violet-700" },
-                  { label: "🛒 " + dict.sales.cashExpense, value: cashExpense, setter: setCashExpense, color: "text-amber-700" },
                 ] as const).map(({ label, value, setter, color }) => (
                   <div key={label} className="flex items-center gap-2">
                     <span className={`w-36 text-xs font-medium shrink-0 ${color}`}>{label}</span>
@@ -240,6 +248,35 @@ export function SalesRowActions({
                     </div>
                   </div>
                 ))}
+
+                <div className="space-y-2 border-t border-zinc-200 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-amber-700">🛒 {dict.sales.cashExpense}</span>
+                    <button type="button" onClick={addCashItem} className="text-xs font-medium text-amber-700 hover:underline">
+                      + {dict.sales.cashExpenseAdd}
+                    </button>
+                  </div>
+                  {cashItems.map((it, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input
+                        value={it.note}
+                        onChange={(e) => updateCashItem(i, "note", e.target.value)}
+                        placeholder={dict.sales.cashExpenseNotePlaceholder}
+                        className="flex-1 rounded border border-zinc-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      />
+                      <div className="relative w-24">
+                        <span className="absolute inset-y-0 left-2 flex items-center text-zinc-400 text-xs">¥</span>
+                        <input
+                          type="number"
+                          value={it.amount}
+                          onChange={(e) => updateCashItem(i, "amount", e.target.value)}
+                          className="w-full rounded border border-zinc-300 pl-5 pr-2 py-1.5 text-right text-sm tabular-nums focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                      </div>
+                      <button type="button" onClick={() => removeCashItem(i)} className="px-1 text-zinc-400 hover:text-red-500" aria-label="remove">✕</button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="flex items-center justify-between rounded-lg bg-zinc-900 px-4 py-3 text-white">

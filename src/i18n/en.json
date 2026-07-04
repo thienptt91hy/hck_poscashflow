@@ -28,6 +28,7 @@
     "title": "Daily sales", "newEntry": "New sale", "customerCount": "Customer count",
     "cash": "Cash", "qrCard": "QR / Card", "bankTransfer": "Bank transfer",
     "cashExpense": "Cash for goods",
+    "cashExpenseAdd": "Add item", "cashExpenseNotePlaceholder": "e.g. rice",
     "totalRevenue": "Total revenue", "avgPerCustomer": "Avg / customer",
     "revenueStream": "Revenue stream", "streamMain": "Main (meals)", "streamCafe": "Cafe / Bakery",
     "saved": "Sale saved", "unit": { "customer": "ppl", "yen": "¥" }

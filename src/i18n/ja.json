@@ -28,6 +28,7 @@
     "title": "日次売上", "newEntry": "売上入力", "customerCount": "来客数",
     "cash": "現金", "qrCard": "QR / カード", "bankTransfer": "振込",
     "cashExpense": "現金仕入",
+    "cashExpenseAdd": "項目追加", "cashExpenseNotePlaceholder": "例：米の仕入",
     "totalRevenue": "売上合計", "avgPerCustomer": "平均単価",
     "revenueStream": "売上区分", "streamMain": "メイン (食事)", "streamCafe": "カフェ/パン",
     "saved": "売上を保存しました", "unit": { "customer": "人", "yen": "¥" }

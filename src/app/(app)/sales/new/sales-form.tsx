@@ -56,7 +56,7 @@ export function SalesForm({
   const [cash, setCash] = useState("");
   const [qrCard, setQrCard] = useState("");
   const [bankTransfer, setBankTransfer] = useState("");
-  const [cashExpense, setCashExpense] = useState("");
+  const [cashItems, setCashItems] = useState<{ note: string; amount: string }[]>([]);
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -64,13 +64,18 @@ export function SalesForm({
   const selectedStore = stores.find((s) => s.id === storeId);
   const employeesForStore = employees.filter((e) => e.store_id === storeId);
 
+  const addCashItem = () => setCashItems((p) => [...p, { note: "", amount: "" }]);
+  const removeCashItem = (i: number) => setCashItems((p) => p.filter((_, idx) => idx !== i));
+  const updateCashItem = (i: number, field: "note" | "amount", val: string) =>
+    setCashItems((p) => p.map((it, idx) => (idx === i ? { ...it, [field]: val } : it)));
+
   const total = useMemo(
     () =>
       (Number(cash) || 0) +
       (Number(qrCard) || 0) +
       (Number(bankTransfer) || 0) +
-      (Number(cashExpense) || 0),
-    [cash, qrCard, bankTransfer, cashExpense],
+      cashItems.reduce((s, it) => s + (Number(it.amount) || 0), 0),
+    [cash, qrCard, bankTransfer, cashItems],
   );
   const avgPerCustomer = useMemo(() => {
     const c = Number(customerCount) || 0;
@@ -100,7 +105,9 @@ export function SalesForm({
         cash: Number(cash) || 0,
         qr_card: Number(qrCard) || 0,
         bank_transfer: Number(bankTransfer) || 0,
-        cash_expense: Number(cashExpense) || 0,
+        cash_expense_items: cashItems
+          .filter((it) => (Number(it.amount) || 0) > 0)
+          .map((it) => ({ amount: Number(it.amount) || 0, note: it.note.trim() || null })),
         notes: notes || null,
         created_by: profile.id,
       });
@@ -114,7 +121,7 @@ export function SalesForm({
       setCash("");
       setQrCard("");
       setBankTransfer("");
-      setCashExpense("");
+      setCashItems([]);
       setNotes("");
       router.refresh();
     });
@@ -203,12 +210,50 @@ export function SalesForm({
               onChange={setBankTransfer}
               color="text-violet-700"
             />
-            <MoneyField
-              label={"🛒 " + dict.sales.cashExpense}
-              value={cashExpense}
-              onChange={setCashExpense}
-              color="text-amber-700"
-            />
+            <div className="space-y-2 border-t border-zinc-200 pt-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-amber-700">
+                  🛒 {dict.sales.cashExpense}
+                </span>
+                <button
+                  type="button"
+                  onClick={addCashItem}
+                  className="text-xs font-medium text-amber-700 hover:underline"
+                >
+                  + {dict.sales.cashExpenseAdd}
+                </button>
+              </div>
+              {cashItems.map((it, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Input
+                    value={it.note}
+                    onChange={(e) => updateCashItem(i, "note", e.target.value)}
+                    placeholder={dict.sales.cashExpenseNotePlaceholder}
+                    className="flex-1"
+                  />
+                  <div className="relative w-28">
+                    <span className="absolute inset-y-0 left-2 flex items-center text-zinc-400">¥</span>
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      value={it.amount}
+                      onChange={(e) => updateCashItem(i, "amount", e.target.value)}
+                      placeholder="0"
+                      className="pl-6 text-right tabular-nums"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeCashItem(i)}
+                    className="px-1 text-zinc-400 hover:text-red-500"
+                    aria-label="remove"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-end justify-between rounded-lg bg-zinc-900 px-5 py-4 text-white">

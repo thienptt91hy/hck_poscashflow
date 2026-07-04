@@ -76,7 +76,7 @@ export default async function SalesListPage({
   let query = supabase
     .from("daily_sales")
     .select(
-      "id, sale_date, store_id, revenue_stream, customer_count, cash, qr_card, bank_transfer, cash_expense, total_revenue, avg_per_customer, notes, stores(code, name_vi, name_ja, name_en)",
+      "id, sale_date, store_id, revenue_stream, customer_count, cash, qr_card, bank_transfer, cash_expense, cash_expense_items, total_revenue, avg_per_customer, notes, stores(code, name_vi, name_ja, name_en)",
     )
     .gte("sale_date", start)
     .lte("sale_date", end)
@@ -247,7 +247,7 @@ export default async function SalesListPage({
                               cash: r.cash,
                               qr_card: r.qr_card,
                               bank_transfer: r.bank_transfer,
-                              cash_expense: r.cash_expense,
+                              cash_expense_items: (r.cash_expense_items as { amount: number; note: string | null }[] | null) ?? [],
                               notes: r.notes ?? null,
                             }}
                             stores={storeOpts}
