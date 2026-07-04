@@ -146,6 +146,13 @@ export function DateRangePicker({
     return fmt(s) === pStart && fmt(e) === (pEnd ?? pStart);
   });
 
+  // Label for the currently-applied range (shown on the trigger button)
+  const currentLabel =
+    presets.find((p) => {
+      const [s, e] = p.calc();
+      return fmt(s) === from && fmt(e) === to;
+    })?.label ?? r.custom;
+
   return (
     <div className="relative">
       <button
@@ -153,7 +160,9 @@ export function DateRangePicker({
         className="inline-flex h-9 items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
       >
         <CalendarDays className="h-4 w-4 text-zinc-400" />
-        <span className="tabular-nums">
+        <span className="font-semibold text-zinc-800">{currentLabel}</span>
+        <span className="text-zinc-300">·</span>
+        <span className="tabular-nums text-zinc-500">
           {display(from)} <span className="text-zinc-400">–</span> {display(to)}
         </span>
         <ChevronDown className="h-4 w-4 text-zinc-400" />

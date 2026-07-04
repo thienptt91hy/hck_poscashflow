@@ -5,7 +5,7 @@
     "last7Days": "過去7日", "last14Days": "過去14日",
     "last30Days": "過去30日", "last90Days": "過去90日",
     "thisMonth": "今月", "lastMonth": "先月", "lastYear": "過去1年",
-    "apply": "適用", "cancel": "キャンセル"
+    "apply": "適用", "cancel": "キャンセル", "custom": "カスタム"
   },
   "nav": {
     "dashboard": "ダッシュボード", "sales": "売上", "salesNew": "売上入力",

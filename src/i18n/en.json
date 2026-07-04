@@ -5,7 +5,7 @@
     "last7Days": "Last 7 days", "last14Days": "Last 14 days",
     "last30Days": "Last 30 days", "last90Days": "Last 90 days",
     "thisMonth": "This month", "lastMonth": "Last month", "lastYear": "Last year",
-    "apply": "Apply", "cancel": "Cancel"
+    "apply": "Apply", "cancel": "Cancel", "custom": "Custom"
   },
   "nav": {
     "dashboard": "Dashboard", "sales": "Sales", "salesNew": "New sale",

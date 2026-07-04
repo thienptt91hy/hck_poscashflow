@@ -5,7 +5,7 @@
     "last7Days": "7 ngày qua", "last14Days": "14 ngày qua",
     "last30Days": "30 ngày qua", "last90Days": "90 ngày qua",
     "thisMonth": "Tháng này", "lastMonth": "Tháng trước", "lastYear": "1 năm qua",
-    "apply": "Áp dụng", "cancel": "Hủy"
+    "apply": "Áp dụng", "cancel": "Hủy", "custom": "Tùy chọn"
   },
   "nav": {
     "dashboard": "Tổng quan", "sales": "Doanh thu", "salesNew": "Nhập doanh thu",
