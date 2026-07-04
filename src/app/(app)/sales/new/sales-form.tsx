@@ -56,6 +56,7 @@ export function SalesForm({
   const [cash, setCash] = useState("");
   const [qrCard, setQrCard] = useState("");
   const [bankTransfer, setBankTransfer] = useState("");
+  const [cashExpense, setCashExpense] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -64,8 +65,12 @@ export function SalesForm({
   const employeesForStore = employees.filter((e) => e.store_id === storeId);
 
   const total = useMemo(
-    () => (Number(cash) || 0) + (Number(qrCard) || 0) + (Number(bankTransfer) || 0),
-    [cash, qrCard, bankTransfer],
+    () =>
+      (Number(cash) || 0) +
+      (Number(qrCard) || 0) +
+      (Number(bankTransfer) || 0) +
+      (Number(cashExpense) || 0),
+    [cash, qrCard, bankTransfer, cashExpense],
   );
   const avgPerCustomer = useMemo(() => {
     const c = Number(customerCount) || 0;
@@ -95,6 +100,7 @@ export function SalesForm({
         cash: Number(cash) || 0,
         qr_card: Number(qrCard) || 0,
         bank_transfer: Number(bankTransfer) || 0,
+        cash_expense: Number(cashExpense) || 0,
         notes: notes || null,
         created_by: profile.id,
       });
@@ -108,6 +114,7 @@ export function SalesForm({
       setCash("");
       setQrCard("");
       setBankTransfer("");
+      setCashExpense("");
       setNotes("");
       router.refresh();
     });
@@ -195,6 +202,12 @@ export function SalesForm({
               value={bankTransfer}
               onChange={setBankTransfer}
               color="text-violet-700"
+            />
+            <MoneyField
+              label={"🛒 " + dict.sales.cashExpense}
+              value={cashExpense}
+              onChange={setCashExpense}
+              color="text-amber-700"
             />
           </div>
 

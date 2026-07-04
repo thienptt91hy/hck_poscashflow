@@ -27,6 +27,7 @@
   "sales": {
     "title": "日次売上", "newEntry": "売上入力", "customerCount": "来客数",
     "cash": "現金", "qrCard": "QR / カード", "bankTransfer": "振込",
+    "cashExpense": "現金仕入",
     "totalRevenue": "売上合計", "avgPerCustomer": "平均単価",
     "revenueStream": "売上区分", "streamMain": "メイン (食事)", "streamCafe": "カフェ/パン",
     "saved": "売上を保存しました", "unit": { "customer": "人", "yen": "¥" }
@@ -51,7 +52,8 @@
   "expenses": {
     "title": "経費", "variable": "変動経費", "newExpense": "経費追加",
     "category": "カテゴリ", "paidFrom": "支払元", "paidFromCash": "現金", "paidFromBank": "銀行",
-    "fixedMonthly": "毎月の固定費", "editAmount": "金額を編集"
+    "fixedMonthly": "毎月の固定費", "editAmount": "金額を編集",
+    "autoFromSales": "売上から"
   },
   "employees": {
     "title": "従業員", "addEmployee": "従業員追加", "position": "役職", "status": "状態"

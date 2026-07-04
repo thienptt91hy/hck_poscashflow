@@ -43,6 +43,7 @@ export interface DailySale {
   cash: number;
   qr_card: number;
   bank_transfer: number;
+  cash_expense: number;
   total_revenue: number;
   avg_per_customer: number;
   notes: string | null;

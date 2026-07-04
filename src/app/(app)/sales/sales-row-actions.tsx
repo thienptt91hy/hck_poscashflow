@@ -20,6 +20,7 @@ interface SaleRow {
   cash: number;
   qr_card: number;
   bank_transfer: number;
+  cash_expense: number;
   notes: string | null;
 }
 
@@ -45,12 +46,17 @@ export function SalesRowActions({
   const [cash, setCash] = useState(String(row.cash));
   const [qrCard, setQrCard] = useState(String(row.qr_card));
   const [bankTransfer, setBankTransfer] = useState(String(row.bank_transfer));
+  const [cashExpense, setCashExpense] = useState(String(row.cash_expense));
   const [notes, setNotes] = useState(row.notes ?? "");
 
   const selectedStore = stores.find((s) => s.id === storeId);
   const total = useMemo(
-    () => (Number(cash) || 0) + (Number(qrCard) || 0) + (Number(bankTransfer) || 0),
-    [cash, qrCard, bankTransfer],
+    () =>
+      (Number(cash) || 0) +
+      (Number(qrCard) || 0) +
+      (Number(bankTransfer) || 0) +
+      (Number(cashExpense) || 0),
+    [cash, qrCard, bankTransfer, cashExpense],
   );
 
   const openEdit = () => {
@@ -61,6 +67,7 @@ export function SalesRowActions({
     setCash(String(row.cash));
     setQrCard(String(row.qr_card));
     setBankTransfer(String(row.bank_transfer));
+    setCashExpense(String(row.cash_expense));
     setNotes(row.notes ?? "");
     setShowEdit(true);
   };
@@ -76,6 +83,7 @@ export function SalesRowActions({
         cash: Number(cash) || 0,
         qr_card: Number(qrCard) || 0,
         bank_transfer: Number(bankTransfer) || 0,
+        cash_expense: Number(cashExpense) || 0,
         notes: notes || null,
       }).eq("id", row.id);
       setShowEdit(false);
@@ -217,6 +225,7 @@ export function SalesRowActions({
                   { label: "💵 " + dict.sales.cash, value: cash, setter: setCash, color: "text-emerald-700" },
                   { label: "💳 " + dict.sales.qrCard, value: qrCard, setter: setQrCard, color: "text-blue-700" },
                   { label: "🏦 " + dict.sales.bankTransfer, value: bankTransfer, setter: setBankTransfer, color: "text-violet-700" },
+                  { label: "🛒 " + dict.sales.cashExpense, value: cashExpense, setter: setCashExpense, color: "text-amber-700" },
                 ] as const).map(({ label, value, setter, color }) => (
                   <div key={label} className="flex items-center gap-2">
                     <span className={`w-36 text-xs font-medium shrink-0 ${color}`}>{label}</span>

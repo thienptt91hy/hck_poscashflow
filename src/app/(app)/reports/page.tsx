@@ -41,7 +41,7 @@ export default async function ReportsPage({
     { data: wholesale },
   ] = await Promise.all([
     supabase.from("stores").select("id, code, name_vi, name_ja, name_en").order("sort_order"),
-    supabase.from("daily_sales").select("store_id, customer_count, total_revenue, cash, qr_card, bank_transfer")
+    supabase.from("daily_sales").select("store_id, customer_count, total_revenue, cash, qr_card, bank_transfer, cash_expense")
       .gte("sale_date", monthStart).lt("sale_date", monthEnd),
     supabase.from("cash_movements").select("amount").eq("direction", "in")
       .gte("move_date", monthStart).lt("move_date", monthEnd),
@@ -72,6 +72,7 @@ export default async function ReportsPage({
       cash: rows.reduce((sum, r) => sum + (r.cash ?? 0), 0),
       qrCard: rows.reduce((sum, r) => sum + (r.qr_card ?? 0), 0),
       bankTransfer: rows.reduce((sum, r) => sum + (r.bank_transfer ?? 0), 0),
+      cashExpense: rows.reduce((sum, r) => sum + (r.cash_expense ?? 0), 0),
     };
   });
 
@@ -117,6 +118,7 @@ export default async function ReportsPage({
                 <th className="px-4 py-2.5 text-right">{dict.sales.cash}</th>
                 <th className="px-4 py-2.5 text-right">{dict.sales.qrCard}</th>
                 <th className="px-4 py-2.5 text-right">{dict.sales.bankTransfer}</th>
+                <th className="px-4 py-2.5 text-right">{dict.sales.cashExpense}</th>
                 <th className="px-4 py-2.5 text-right font-semibold">{dict.common.total}</th>
               </tr>
             </thead>
@@ -128,20 +130,21 @@ export default async function ReportsPage({
                   <td className="px-4 py-2.5 text-right tabular-nums text-emerald-700">{formatYen(r.cash)}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-blue-700">{formatYen(r.qrCard)}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-violet-700">{formatYen(r.bankTransfer)}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums text-amber-700">{formatYen(r.cashExpense)}</td>
                   <td className="px-4 py-2.5 text-right font-bold tabular-nums">{formatYen(r.revenue)}</td>
                 </tr>
               ))}
               {wholesaleTotal > 0 && (
                 <tr className="bg-blue-50">
                   <td className="px-4 py-2.5 font-medium text-blue-700">{dict.reports.wholesale}</td>
-                  <td colSpan={4} />
+                  <td colSpan={5} />
                   <td className="px-4 py-2.5 text-right font-bold tabular-nums text-blue-700">{formatYen(wholesaleTotal)}</td>
                 </tr>
               )}
               <tr className="bg-zinc-900 text-white">
                 <td className="px-4 py-2.5 font-bold">{dict.reports.totalRevenue}</td>
                 <td className="px-4 py-2.5 text-right tabular-nums">{totalCustomers.toLocaleString()}</td>
-                <td colSpan={3} />
+                <td colSpan={4} />
                 <td className="px-4 py-2.5 text-right font-bold tabular-nums text-lg">
                   {formatYen(totalRevenue + wholesaleTotal)}
                 </td>

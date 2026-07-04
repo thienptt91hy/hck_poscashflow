@@ -27,6 +27,7 @@
   "sales": {
     "title": "Doanh thu hàng ngày", "newEntry": "Nhập doanh thu", "customerCount": "Số khách",
     "cash": "Tiền mặt", "qrCard": "QR / Thẻ", "bankTransfer": "Chuyển khoản",
+    "cashExpense": "Tiền mặt TT hàng hóa",
     "totalRevenue": "Tổng doanh thu", "avgPerCustomer": "TB/khách",
     "revenueStream": "Dòng doanh thu", "streamMain": "Chính (食事)", "streamCafe": "Cafe/Bánh mì",
     "saved": "Đã lưu doanh thu", "unit": { "customer": "khách", "yen": "¥" }
@@ -53,7 +54,8 @@
     "title": "Chi phí", "variable": "Chi phí phát sinh", "newExpense": "Thêm chi phí",
     "category": "Danh mục", "paidFrom": "Thanh toán từ",
     "paidFromCash": "Tiền mặt", "paidFromBank": "Ngân hàng",
-    "fixedMonthly": "Chi phí cố định hàng tháng", "editAmount": "Sửa số tiền"
+    "fixedMonthly": "Chi phí cố định hàng tháng", "editAmount": "Sửa số tiền",
+    "autoFromSales": "Từ doanh thu"
   },
   "employees": {
     "title": "Nhân viên", "addEmployee": "Thêm nhân viên",

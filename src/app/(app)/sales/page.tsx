@@ -76,7 +76,7 @@ export default async function SalesListPage({
   let query = supabase
     .from("daily_sales")
     .select(
-      "id, sale_date, store_id, revenue_stream, customer_count, cash, qr_card, bank_transfer, total_revenue, avg_per_customer, notes, stores(code, name_vi, name_ja, name_en)",
+      "id, sale_date, store_id, revenue_stream, customer_count, cash, qr_card, bank_transfer, cash_expense, total_revenue, avg_per_customer, notes, stores(code, name_vi, name_ja, name_en)",
     )
     .gte("sale_date", start)
     .lte("sale_date", end)
@@ -197,6 +197,7 @@ export default async function SalesListPage({
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.cash}</th>
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.qrCard}</th>
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.bankTransfer}</th>
+                    <th className="px-4 py-2.5 text-right font-medium">{dict.sales.cashExpense}</th>
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.totalRevenue}</th>
                     <th className="px-4 py-2.5 text-center font-medium w-20"></th>
                   </tr>
@@ -229,6 +230,9 @@ export default async function SalesListPage({
                         <td className="px-4 py-2.5 text-right tabular-nums text-violet-700">
                           {formatYen(r.bank_transfer)}
                         </td>
+                        <td className="px-4 py-2.5 text-right tabular-nums text-amber-700">
+                          {formatYen(r.cash_expense)}
+                        </td>
                         <td className="px-4 py-2.5 text-right font-semibold tabular-nums">
                           {formatYen(r.total_revenue)}
                         </td>
@@ -243,6 +247,7 @@ export default async function SalesListPage({
                               cash: r.cash,
                               qr_card: r.qr_card,
                               bank_transfer: r.bank_transfer,
+                              cash_expense: r.cash_expense,
                               notes: r.notes ?? null,
                             }}
                             stores={storeOpts}
@@ -266,6 +271,9 @@ export default async function SalesListPage({
                     </td>
                     <td className="px-4 py-2.5 text-right tabular-nums text-violet-700">
                       {formatYen((rows ?? []).reduce((s, r) => s + r.bank_transfer, 0))}
+                    </td>
+                    <td className="px-4 py-2.5 text-right tabular-nums text-amber-700">
+                      {formatYen((rows ?? []).reduce((s, r) => s + r.cash_expense, 0))}
                     </td>
                     <td className="px-4 py-2.5 text-right tabular-nums">{formatYen(totalRevenue)}</td>
                     <td />

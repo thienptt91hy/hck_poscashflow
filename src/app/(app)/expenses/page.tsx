@@ -23,7 +23,7 @@ export default async function ExpensesPage() {
     supabase.from("stores").select("id, name_vi, name_ja, name_en").eq("active", true).order("sort_order"),
     supabase
       .from("variable_expenses")
-      .select("id, expense_date, store_id, category, amount, paid_from, note, stores(name_vi, name_ja, name_en)")
+      .select("id, expense_date, store_id, category, amount, paid_from, note, ref_table, stores(name_vi, name_ja, name_en)")
       .order("expense_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(60),
@@ -122,11 +122,17 @@ export default async function ExpensesPage() {
                           <td className="px-4 py-2 text-zinc-500 text-xs max-w-[100px] truncate">{exp.note ?? ""}</td>
                           <td className="px-4 py-2 text-right font-semibold tabular-nums text-red-600">{formatYen(exp.amount)}</td>
                           <td className="px-4 py-2">
-                            <ExpenseRowActions
-                              row={{ id: exp.id, expense_date: exp.expense_date, store_id: exp.store_id ?? null, category: exp.category ?? "", amount: exp.amount, paid_from: exp.paid_from as "cash" | "bank", note: exp.note ?? null }}
-                              stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))}
-                              dict={dict}
-                            />
+                            {exp.ref_table === "daily_sales" ? (
+                              <span className="whitespace-nowrap text-[11px] text-zinc-400" title={dict.expenses.autoFromSales}>
+                                🔒 {dict.expenses.autoFromSales}
+                              </span>
+                            ) : (
+                              <ExpenseRowActions
+                                row={{ id: exp.id, expense_date: exp.expense_date, store_id: exp.store_id ?? null, category: exp.category ?? "", amount: exp.amount, paid_from: exp.paid_from as "cash" | "bank", note: exp.note ?? null }}
+                                stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))}
+                                dict={dict}
+                              />
+                            )}
                           </td>
                         </tr>
                       );
