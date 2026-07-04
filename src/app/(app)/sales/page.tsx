@@ -2,9 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
-import { formatYen, TZ } from "@/lib/format";
-import { formatInTimeZone } from "date-fns-tz";
-import { subDays, parseISO } from "date-fns";
+import { formatYen } from "@/lib/format";
+import { resolveRange } from "@/lib/date-range";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlusCircle } from "lucide-react";
 import { SalesRowActions } from "./sales-row-actions";
@@ -13,51 +12,19 @@ import { SalesCharts } from "./sales-charts";
 
 export const dynamic = "force-dynamic";
 
-type Period = "today" | "yesterday" | "last_7_days" | "this_month" | "last_month";
-
-function getPeriodRange(period: Period) {
-  const now = new Date();
-  const fmt = (d: Date) => formatInTimeZone(d, TZ, "yyyy-MM-dd");
-  const today = fmt(now);
-  const thisMonthStart = formatInTimeZone(now, TZ, "yyyy-MM-01");
-  const prevMonthEndDate = subDays(parseISO(thisMonthStart), 1);
-  const prevMonthStart = formatInTimeZone(prevMonthEndDate, TZ, "yyyy-MM-01");
-
-  // Last day of current month (consistent with monthly report which uses < first day of next month)
-  const [yr, mo] = thisMonthStart.split("-").map(Number);
-  const nextMonthStr = mo === 12 ? `${yr + 1}-01-01` : `${yr}-${String(mo + 1).padStart(2, "0")}-01`;
-  const thisMonthEnd = fmt(subDays(parseISO(nextMonthStr), 1));
-
-  switch (period) {
-    case "today":
-      return { start: today, end: today };
-    case "yesterday": {
-      const y = fmt(subDays(now, 1));
-      return { start: y, end: y };
-    }
-    case "last_7_days":
-      return { start: fmt(subDays(now, 6)), end: today };
-    case "last_month":
-      return { start: prevMonthStart, end: fmt(prevMonthEndDate) };
-    default: // this_month — full month (same range as monthly report)
-      return { start: thisMonthStart, end: thisMonthEnd };
-  }
-}
-
 export default async function SalesListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string; store?: string }>;
+  searchParams: Promise<{ from?: string; to?: string; store?: string }>;
 }) {
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
 
-  const { period: periodParam, store: storeParam } = await searchParams;
-  const period = (periodParam ?? "this_month") as Period;
+  const { from: fromParam, to: toParam, store: storeParam } = await searchParams;
   const selectedStore = storeParam ?? "all";
 
-  const { start, end } = getPeriodRange(period);
+  const { start, end } = resolveRange(fromParam, toParam);
 
   const { data: stores } = await supabase
     .from("stores")
@@ -106,14 +73,6 @@ export default async function SalesListPage({
     customer_count: r.customer_count,
   }));
 
-  const periods = [
-    { key: "today", label: dict.common.today },
-    { key: "yesterday", label: dict.common.yesterday },
-    { key: "last_7_days", label: dict.dashboard.last7Days },
-    { key: "this_month", label: dict.common.thisMonth },
-    { key: "last_month", label: dict.common.lastMonth },
-  ];
-
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -130,10 +89,12 @@ export default async function SalesListPage({
 
       {/* Filters */}
       <SalesFilters
-        periods={periods}
         stores={storeOpts}
-        currentPeriod={period}
         currentStore={selectedStore}
+        from={start}
+        to={end}
+        dict={dict}
+        locale={locale}
       />
 
       {/* KPI summary row */}

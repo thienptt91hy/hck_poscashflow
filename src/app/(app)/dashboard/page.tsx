@@ -1,48 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
-import { formatYen, TZ } from "@/lib/format";
-import { formatInTimeZone } from "date-fns-tz";
-import { subDays, parseISO } from "date-fns";
+import { formatYen } from "@/lib/format";
+import { resolveRange, previousRange } from "@/lib/date-range";
 import { TrendingUp, TrendingDown, Minus, Wallet, Landmark } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { PeriodSelector } from "./period-selector";
+import { DateRangePicker } from "@/components/date-range-picker";
 import { DashboardCharts } from "./dashboard-charts";
 
 export const dynamic = "force-dynamic";
-
-type Period = "today" | "yesterday" | "last_7_days" | "this_month" | "last_month";
-
-function getPeriodRange(period: Period) {
-  const now = new Date();
-  const fmt = (d: Date) => formatInTimeZone(d, TZ, "yyyy-MM-dd");
-  const today = fmt(now);
-  const thisMonthStart = formatInTimeZone(now, TZ, "yyyy-MM-01");
-  const prevMonthEndDate = subDays(parseISO(thisMonthStart), 1);
-  const prevMonthStart = formatInTimeZone(prevMonthEndDate, TZ, "yyyy-MM-01");
-  const prevMonthEnd = fmt(prevMonthEndDate);
-
-  switch (period) {
-    case "today":
-      return { start: today, end: today, prevStart: fmt(subDays(now, 1)), prevEnd: fmt(subDays(now, 1)) };
-    case "yesterday": {
-      const y = fmt(subDays(now, 1));
-      return { start: y, end: y, prevStart: fmt(subDays(now, 2)), prevEnd: fmt(subDays(now, 2)) };
-    }
-    case "last_7_days":
-      return {
-        start: fmt(subDays(now, 6)), end: today,
-        prevStart: fmt(subDays(now, 13)), prevEnd: fmt(subDays(now, 7)),
-      };
-    case "last_month": {
-      const p2EndDate = subDays(parseISO(prevMonthStart), 1);
-      const p2Start = formatInTimeZone(p2EndDate, TZ, "yyyy-MM-01");
-      return { start: prevMonthStart, end: prevMonthEnd, prevStart: p2Start, prevEnd: fmt(p2EndDate) };
-    }
-    default: // this_month
-      return { start: thisMonthStart, end: today, prevStart: prevMonthStart, prevEnd: prevMonthEnd };
-  }
-}
 
 function pctChange(curr: number, prev: number): number | null {
   if (prev === 0) return null;
@@ -114,11 +80,12 @@ function KpiCard({
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ from?: string; to?: string }>;
 }) {
   const params = await searchParams;
-  const period = (params.period ?? "this_month") as Period;
-  const range = getPeriodRange(period);
+  const { start, end } = resolveRange(params.from, params.to);
+  const { prevStart, prevEnd } = previousRange(start, end);
+  const range = { start, end, prevStart, prevEnd };
 
   const locale = await getLocale();
   const dict = await getDictionary(locale);
@@ -219,14 +186,6 @@ export default async function DashboardPage({
     revenue: storeRevMap[s.id] ?? 0,
   }));
 
-  const PERIODS = [
-    { key: "today", label: dict.common.today },
-    { key: "yesterday", label: dict.common.yesterday },
-    { key: "last_7_days", label: dict.dashboard.last7Days },
-    { key: "this_month", label: dict.common.thisMonth },
-    { key: "last_month", label: dict.common.lastMonth },
-  ];
-
   const vsPrev = dict.dashboard.vsPrev;
 
   return (
@@ -234,7 +193,7 @@ export default async function DashboardPage({
       {/* Header + Period selector */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-xl font-bold text-zinc-900">{dict.dashboard.title}</h1>
-        <PeriodSelector periods={PERIODS} current={period} />
+        <DateRangePicker basePath="/dashboard" from={range.start} to={range.end} dict={dict} locale={locale} />
       </div>
 
       {/* KPI Cards */}

@@ -2,11 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-export interface PeriodOption {
-  key: string;
-  label: string;
-}
+import { DateRangePicker } from "@/components/date-range-picker";
+import type { Dictionary } from "@/i18n/dictionaries";
 
 export interface StoreOption {
   id: string;
@@ -14,49 +11,40 @@ export interface StoreOption {
 }
 
 export function SalesFilters({
-  periods,
   stores,
-  currentPeriod,
   currentStore,
+  from,
+  to,
+  dict,
+  locale,
 }: {
-  periods: PeriodOption[];
   stores: StoreOption[];
-  currentPeriod: string;
   currentStore: string;
+  from: string;
+  to: string;
+  dict: Dictionary;
+  locale: string;
 }) {
   const router = useRouter();
 
-  const update = (key: string, val: string) => {
+  const setStore = (val: string) => {
     const params = new URLSearchParams(window.location.search);
-    params.set(key, val);
+    params.set("store", val);
     router.replace(`/sales?${params.toString()}`);
   };
 
   return (
     <div className="flex flex-col gap-2.5">
-      {/* Period selector */}
-      <div className="flex rounded-xl border border-zinc-200 bg-zinc-50 p-1 gap-0.5 overflow-x-auto">
-        {periods.map((p) => (
-          <button
-            key={p.key}
-            onClick={() => update("period", p.key)}
-            className={cn(
-              "rounded-lg px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap touch-manipulation",
-              p.key === currentPeriod
-                ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
-                : "text-zinc-500 hover:text-zinc-700 hover:bg-white/60",
-            )}
-          >
-            {p.label}
-          </button>
-        ))}
+      {/* Date range */}
+      <div className="flex">
+        <DateRangePicker basePath="/sales" from={from} to={to} dict={dict} locale={locale} />
       </div>
 
       {/* Store filter */}
       {stores.length > 1 && (
         <div className="flex rounded-xl border border-zinc-200 bg-zinc-50 p-1 gap-0.5 overflow-x-auto">
           <button
-            onClick={() => update("store", "all")}
+            onClick={() => setStore("all")}
             className={cn(
               "rounded-lg px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap touch-manipulation",
               currentStore === "all"
@@ -69,7 +57,7 @@ export function SalesFilters({
           {stores.map((s) => (
             <button
               key={s.id}
-              onClick={() => update("store", s.id)}
+              onClick={() => setStore(s.id)}
               className={cn(
                 "rounded-lg px-3 py-1.5 text-xs font-medium transition-all whitespace-nowrap touch-manipulation",
                 s.id === currentStore

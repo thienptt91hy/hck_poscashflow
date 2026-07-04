@@ -1,5 +1,12 @@
 {
   "app": { "name": "POS CashFlow", "tagline": "売上・資金管理" },
+  "range": {
+    "today": "今日", "yesterday": "昨日",
+    "last7Days": "過去7日", "last14Days": "過去14日",
+    "last30Days": "過去30日", "last90Days": "過去90日",
+    "thisMonth": "今月", "lastMonth": "先月", "lastYear": "過去1年",
+    "apply": "適用", "cancel": "キャンセル"
+  },
   "nav": {
     "dashboard": "ダッシュボード", "sales": "売上", "salesNew": "売上入力",
     "cash": "現金", "bank": "銀行", "expenses": "経費", "wholesale": "卸売",

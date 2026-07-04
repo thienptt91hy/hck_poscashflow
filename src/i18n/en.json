@@ -1,5 +1,12 @@
 {
   "app": { "name": "POS CashFlow", "tagline": "Sales & cash flow manager" },
+  "range": {
+    "today": "Today", "yesterday": "Yesterday",
+    "last7Days": "Last 7 days", "last14Days": "Last 14 days",
+    "last30Days": "Last 30 days", "last90Days": "Last 90 days",
+    "thisMonth": "This month", "lastMonth": "Last month", "lastYear": "Last year",
+    "apply": "Apply", "cancel": "Cancel"
+  },
   "nav": {
     "dashboard": "Dashboard", "sales": "Sales", "salesNew": "New sale",
     "cash": "Cash", "bank": "Bank", "expenses": "Expenses", "wholesale": "Wholesale",
