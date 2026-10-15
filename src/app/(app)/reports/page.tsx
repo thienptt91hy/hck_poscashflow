@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { getPeriodFinance } from "@/lib/finance-server";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen, TZ } from "@/lib/format";
@@ -16,6 +18,7 @@ export default async function ReportsPage({
 }: {
   searchParams: Promise<{ month?: string }>;
 }) {
+  await requireRole("/reports");
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
@@ -27,6 +30,8 @@ export default async function ReportsPage({
   const [year, mon] = selectedMonth.split("-").map(Number);
   const nextMonth = mon === 12 ? `${year + 1}-01-01` : `${year}-${String(mon + 1).padStart(2, "0")}-01`;
   const monthEnd = new Date(nextMonth).toISOString().slice(0, 10);
+  // Inclusive last day of the month, for the shared finance functions
+  const lastDay = `${selectedMonth}-${String(new Date(year, mon, 0).getDate()).padStart(2, "0")}`;
 
   const [
     { data: stores },
@@ -36,9 +41,7 @@ export default async function ReportsPage({
     { data: bankIn },
     { data: bankOut },
     { data: fixedExp },
-    { data: varExp },
-    { data: salaries },
-    { data: wholesale },
+    period,
   ] = await Promise.all([
     supabase.from("stores").select("id, code, name_vi, name_ja, name_en").order("sort_order"),
     supabase.from("daily_sales").select("store_id, customer_count, total_revenue, cash, qr_card, bank_transfer, cash_expense")
@@ -52,12 +55,8 @@ export default async function ReportsPage({
     supabase.from("bank_transactions").select("amount, fee").eq("direction", "out")
       .gte("tx_date", monthStart).lt("tx_date", monthEnd),
     supabase.from("fixed_expenses").select("name_vi, name_ja, amount").eq("active", true),
-    supabase.from("variable_expenses").select("amount, category")
-      .gte("expense_date", monthStart).lt("expense_date", monthEnd),
-    supabase.from("salary_payments").select("amount")
-      .gte("period_month", monthStart).lt("period_month", monthEnd),
-    supabase.from("wholesale_sales").select("amount")
-      .gte("sale_date", monthStart).lt("sale_date", monthEnd),
+    // Revenue / expenses / profit — same definition as Dashboard (lib/finance.ts)
+    getPeriodFinance(supabase, monthStart, lastDay),
   ]);
 
   const sName = (s: Store) => (s[nameField as "name_vi"] as string | null) ?? s.name_vi;
@@ -78,13 +77,16 @@ export default async function ReportsPage({
 
   const totalRevenue = revenueByStore.reduce((s, r) => s + r.revenue, 0);
   const totalCustomers = revenueByStore.reduce((s, r) => s + r.customers, 0);
-  const wholesaleTotal = (wholesale ?? []).reduce((s, r) => s + r.amount, 0);
-  const fixedTotal = (fixedExp ?? []).reduce((s, r) => s + r.amount, 0);
-  const varTotal = (varExp ?? []).reduce((s, r) => s + r.amount, 0);
-  const salaryTotal = (salaries ?? []).reduce((s, r) => s + r.amount, 0);
-  const totalExpenses = fixedTotal + varTotal + salaryTotal;
-  const grossProfit = totalRevenue + wholesaleTotal - varTotal - salaryTotal;
-  const netProfit = totalRevenue + wholesaleTotal - totalExpenses;
+  const expLine = (k: string) => period.expenses.lines.find((l) => l.key === k)?.amount ?? 0;
+  const wholesaleTotal = period.wholesale;
+  const fixedTotal = expLine("fixed");
+  const varTotal = expLine("variable");
+  const salaryTotal = expLine("salary");
+  const manualCashExp = expLine("manualCash");
+  const manualBankExp = expLine("manualBank");
+  const bankFeesExp = expLine("bankFees");
+  const totalExpenses = period.expenses.total;
+  const netProfit = period.profit;
   const cashInTotal = (cashIn ?? []).reduce((s, r) => s + r.amount, 0);
   const cashOutTotal = (cashOut ?? []).reduce((s, r) => s + r.amount, 0);
   const bankInTotal = (bankIn ?? []).reduce((s, r) => s + r.amount, 0);
@@ -230,6 +232,9 @@ export default async function ReportsPage({
               <Row label={dict.reports.fixedExpenses} value={-fixedTotal} color="red" />
               <Row label={dict.reports.variableExpenses} value={-varTotal} color="red" />
               <Row label={dict.reports.salaryTotal} value={-salaryTotal} color="red" />
+              <Row label={dict.finance.exp_manualCash} value={-manualCashExp} color="red" />
+              <Row label={dict.finance.exp_manualBank} value={-manualBankExp} color="red" />
+              <Row label={dict.finance.exp_bankFees} value={-bankFeesExp} color="red" />
               <Row label={dict.common.total + " " + dict.nav.expenses} value={-totalExpenses} color="red" bold />
               <tr className="bg-zinc-900 text-white text-base">
                 <td className="px-4 py-3 font-bold">{dict.reports.netProfit}</td>

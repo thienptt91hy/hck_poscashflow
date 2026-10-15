@@ -1,4 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { getBankBalance } from "@/lib/finance-server";
+import { BreakdownCard } from "@/components/breakdown-card";
+import { isReadOnly } from "@/lib/permissions";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
@@ -10,27 +14,25 @@ import { PlusCircle } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function BankPage() {
+  const profile = await requireRole("/bank");
+  const readOnly = isReadOnly(profile.role);
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
-  const [{ data: profile }, { data: txs }, { data: allTxs }] = await Promise.all([
-    supabase.from("user_profiles").select("role, store_id").eq("id", user!.id).single(),
+  const [{ data: txs }, bankBal] = await Promise.all([
     supabase
       .from("bank_transactions")
       .select("id, tx_date, direction, category, payment_method, amount, fee, vendor, note, ref_table")
       .order("tx_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(80),
-    // Separate query for balance — no limit so it covers all historical records
-    supabase.from("bank_transactions").select("direction, amount, fee"),
+    // Balance is summed in SQL (no row cap) — see migration 0013 / lib/finance.ts
+    getBankBalance(supabase),
   ]);
 
-  const balance = (allTxs ?? []).reduce((s, t) => {
-    const net = t.direction === "in" ? t.amount : -(t.amount + (t.fee ?? 0));
-    return s + net;
-  }, 0);
+  const balance = bankBal.total;
+  const f = dict.finance;
 
   const methodKey = (m: string) => `method_${m}` as keyof typeof dict.bank;
   const catKey = (c: string) => `cat_${c}` as keyof typeof dict.bank;
@@ -48,24 +50,34 @@ export default async function BankPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PlusCircle className="h-4 w-4" />{dict.bank.newTx}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BankForm
-                dict={dict}
-                profile={{ id: user!.id, role: profile?.role ?? "admin" }}
-              />
-            </CardContent>
-          </Card>
-        </div>
+      <BreakdownCard
+        title={f.balanceBreakdown}
+        formula={f.bankFormula}
+        items={bankBal.lines.map((l) => ({ label: f[`bank_${l.key}` as keyof typeof f] ?? f.other, amount: l.amount }))}
+        totalLabel={dict.dashboard.bankBalance}
+        total={balance}
+      />
 
-        <div className="lg:col-span-3">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {!readOnly && (
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="h-4 w-4" />{dict.bank.newTx}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BankForm
+                  dict={dict}
+                  profile={{ id: profile.id, role: profile.role }}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        <div className={readOnly ? "lg:col-span-5" : "lg:col-span-3"}>
           <Card>
             <CardHeader><CardTitle>{dict.bank.ledger}</CardTitle></CardHeader>
             <CardContent className="p-0">
@@ -78,7 +90,7 @@ export default async function BankPage() {
                       <th className="px-4 py-2.5 text-left">{dict.bank.vendor}</th>
                       <th className="px-4 py-2.5 text-right">{dict.bank.fee}</th>
                       <th className="px-4 py-2.5 text-right">{dict.common.amount}</th>
-                      <th className="px-4 py-2.5 w-20"></th>
+                      {!readOnly && <th className="px-4 py-2.5 w-20"></th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
@@ -108,12 +120,14 @@ export default async function BankPage() {
                           <td className={`px-4 py-2 text-right font-semibold tabular-nums ${isIn ? "text-emerald-700" : "text-red-600"}`}>
                             {isIn ? "+" : "−"}{formatYen(t.amount)}
                           </td>
-                          <td className="px-4 py-2">
-                            <BankRowActions
-                              row={{ id: t.id, tx_date: t.tx_date, direction: t.direction as "in" | "out", category: t.category, payment_method: t.payment_method, amount: t.amount, fee: t.fee ?? 0, vendor: t.vendor ?? null, note: t.note ?? null, ref_table: t.ref_table ?? null }}
-                              dict={dict}
-                            />
-                          </td>
+                          {!readOnly && (
+                            <td className="px-4 py-2">
+                              <BankRowActions
+                                row={{ id: t.id, tx_date: t.tx_date, direction: t.direction as "in" | "out", category: t.category, payment_method: t.payment_method, amount: t.amount, fee: t.fee ?? 0, vendor: t.vendor ?? null, note: t.note ?? null, ref_table: t.ref_table ?? null }}
+                                dict={dict}
+                              />
+                            </td>
+                          )}
                         </tr>
                       );
                     })}

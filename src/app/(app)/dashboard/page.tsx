@@ -1,4 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { getBankBalance, getCashBalance, getPeriodFinance } from "@/lib/finance-server";
+import { BreakdownCard } from "@/components/breakdown-card";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
@@ -87,33 +90,13 @@ export default async function DashboardPage({
   const { prevStart, prevEnd } = previousRange(start, end);
   const range = { start, end, prevStart, prevEnd };
 
+  await requireRole("/dashboard");
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
 
-  const [
-    { data: salesCurr },
-    { data: salesPrev },
-    { data: salesChart },
-    { data: stores },
-    { data: allCash },
-    { data: allBank },
-    { data: expCurr },
-    { data: expPrev },
-    { data: salCurr },
-    { data: salPrev },
-  ] = await Promise.all([
-    supabase
-      .from("daily_sales")
-      .select("store_id, customer_count, cash, qr_card, bank_transfer, total_revenue")
-      .gte("sale_date", range.start)
-      .lte("sale_date", range.end),
-    supabase
-      .from("daily_sales")
-      .select("customer_count, total_revenue")
-      .gte("sale_date", range.prevStart)
-      .lte("sale_date", range.prevEnd),
+  const [{ data: salesChart }, { data: stores }, curr, prev, cashBal, bankBal] = await Promise.all([
     supabase
       .from("daily_sales")
       .select("sale_date, total_revenue, store_id")
@@ -121,63 +104,37 @@ export default async function DashboardPage({
       .lte("sale_date", range.end)
       .order("sale_date"),
     supabase.from("stores").select("id, name_vi, name_ja, name_en").order("sort_order"),
-    supabase.from("cash_movements").select("direction, amount"),
-    supabase.from("bank_transactions").select("direction, amount, fee"),
-    supabase
-      .from("variable_expenses")
-      .select("amount")
-      .gte("expense_date", range.start)
-      .lte("expense_date", range.end),
-    supabase
-      .from("variable_expenses")
-      .select("amount")
-      .gte("expense_date", range.prevStart)
-      .lte("expense_date", range.prevEnd),
-    supabase
-      .from("salary_payments")
-      .select("amount")
-      .gte("period_month", range.start)
-      .lte("period_month", range.end),
-    supabase
-      .from("salary_payments")
-      .select("amount")
-      .gte("period_month", range.prevStart)
-      .lte("period_month", range.prevEnd),
+    // Revenue / expenses / profit: one shared definition (lib/finance.ts, spec finance-formulas.md)
+    getPeriodFinance(supabase, range.start, range.end),
+    getPeriodFinance(supabase, range.prevStart, range.prevEnd),
+    getCashBalance(supabase),
+    getBankBalance(supabase),
   ]);
 
   // KPI calculations
-  const revenue = (salesCurr ?? []).reduce((s, r) => s + (r.total_revenue ?? 0), 0);
-  const revenuePrev = (salesPrev ?? []).reduce((s, r) => s + (r.total_revenue ?? 0), 0);
-  const customers = (salesCurr ?? []).reduce((s, r) => s + (r.customer_count ?? 0), 0);
-  const customersPrev = (salesPrev ?? []).reduce((s, r) => s + (r.customer_count ?? 0), 0);
-  const avgPerCustomer = customers > 0 ? revenue / customers : 0;
-  const avgPrevCustomer = customersPrev > 0 ? revenuePrev / customersPrev : 0;
-  const expenses = (expCurr ?? []).reduce((s, e) => s + e.amount, 0);
-  const expensesPrev = (expPrev ?? []).reduce((s, e) => s + e.amount, 0);
-  const salary = (salCurr ?? []).reduce((s, p) => s + p.amount, 0);
-  const salaryPrev = (salPrev ?? []).reduce((s, p) => s + p.amount, 0);
-  const totalExpenses = expenses + salary;
-  const totalExpensesPrev = expensesPrev + salaryPrev;
-  const profit = revenue - totalExpenses;
-  const profitPrev = revenuePrev - totalExpensesPrev;
+  const revenue = curr.revenue; // retail + wholesale
+  const revenuePrev = prev.revenue;
+  const customers = Number(curr.totals.customers) || 0;
+  const customersPrev = Number(prev.totals.customers) || 0;
+  // Avg per customer stays on retail revenue (wholesale has no walk-in customers)
+  const avgPerCustomer = customers > 0 ? curr.retail / customers : 0;
+  const avgPrevCustomer = customersPrev > 0 ? prev.retail / customersPrev : 0;
+  const totalExpenses = curr.expenses.total;
+  const totalExpensesPrev = prev.expenses.total;
+  const profit = curr.profit;
+  const profitPrev = prev.profit;
 
-  const totalCash = (allCash ?? []).reduce(
-    (s, m) => (m.direction === "in" ? s + m.amount : s - m.amount),
-    0,
-  );
-  const bankBalance = (allBank ?? []).reduce(
-    (s, t) => (t.direction === "in" ? s + t.amount : s - (t.amount + (t.fee ?? 0))),
-    0,
-  );
+  const totalCash = cashBal.total;
+  const bankBalance = bankBal.total;
 
   // Payment mix
-  const cashTotal = (salesCurr ?? []).reduce((s, r) => s + (r.cash ?? 0), 0);
-  const qrTotal = (salesCurr ?? []).reduce((s, r) => s + (r.qr_card ?? 0), 0);
-  const bankTotal = (salesCurr ?? []).reduce((s, r) => s + (r.bank_transfer ?? 0), 0);
+  const cashTotal = Number(curr.totals.cash) || 0;
+  const qrTotal = Number(curr.totals.qr_card) || 0;
+  const bankTotal = Number(curr.totals.bank_transfer) || 0;
 
   // Store breakdown
   const storeRevMap: Record<string, number> = {};
-  for (const r of salesCurr ?? []) {
+  for (const r of salesChart ?? []) {
     storeRevMap[r.store_id] = (storeRevMap[r.store_id] ?? 0) + (r.total_revenue ?? 0);
   }
   const storeOpts = (stores ?? []).map((s) => ({
@@ -185,7 +142,7 @@ export default async function DashboardPage({
     name: (s[nameField as "name_vi"] as string) ?? s.name_vi,
     revenue: storeRevMap[s.id] ?? 0,
   }));
-
+  const f = dict.finance;
   const vsPrev = dict.dashboard.vsPrev;
 
   return (
@@ -260,6 +217,19 @@ export default async function DashboardPage({
 
       {/* "vs prev" hint */}
       <p className="text-xs text-zinc-400 -mt-2 px-0.5">{vsPrev}</p>
+
+      {/* Profit = Revenue − Expenses, itemised */}
+      <BreakdownCard
+        title={f.profitBreakdown}
+        formula={f.profitFormula}
+        items={[
+          { label: f.revenueRetail, amount: curr.retail },
+          { label: f.revenueWholesale, amount: curr.wholesale },
+          ...curr.expenses.lines.map((l) => ({ label: f[`exp_${l.key}` as keyof typeof f], amount: -l.amount })),
+        ]}
+        totalLabel={f.profit}
+        total={profit}
+      />
 
       {/* Charts */}
       <DashboardCharts

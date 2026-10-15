@@ -11,19 +11,21 @@ Hệ thống quản lý doanh thu và dòng tiền cho chuỗi cửa hàng tại
 
 ## Phân quyền
 
-| Tính năng | Admin | Manager | Staff |
-|-----------|:-----:|:-------:|:-----:|
-| Tổng quan (Dashboard) | ✅ | ✅ | ❌ |
-| Nhập doanh thu mới | ✅ | ✅ | ✅ |
-| Xem / lọc doanh thu + biểu đồ | ✅ | ✅ | ✅ |
-| Tiền mặt (sổ quỹ) | ✅ | ✅ | ✅ |
-| Ngân hàng | ✅ | ✅ | ❌ |
-| Chi phí | ✅ | ✅ | ❌ |
-| Nhân viên | ✅ | ✅ | ❌ |
-| Bán sỉ | ✅ | ✅ | ❌ |
-| Lương | ✅ | ❌ | ❌ |
-| Báo cáo tháng | ✅ | ✅ | ❌ |
-| Cài đặt (stores, users, chi phí cố định) | ✅ | ❌ | ❌ |
+| Tính năng | Admin | Manager | Staff | 税理士 (Accountant) |
+|-----------|:-----:|:-------:|:-----:|:-------------------:|
+| Tổng quan (Dashboard) | ✅ | ✅ | ❌ | 👁 |
+| Nhập doanh thu mới | ✅ | ✅ | ✅ | ❌ |
+| Xem / lọc doanh thu + biểu đồ | ✅ | ✅ | ✅ | 👁 |
+| Tiền mặt (sổ quỹ) | ✅ | ✅ | ✅ | 👁 |
+| Ngân hàng | ✅ | ✅ | ❌ | 👁 |
+| Chi phí | ✅ | ✅ | ❌ | 👁 |
+| Nhân viên | ✅ | ✅ | ❌ | 👁 |
+| Bán sỉ | ✅ | ✅ | ❌ | 👁 |
+| Lương | ✅ | ❌ | ❌ | 👁 |
+| Báo cáo tháng | ✅ | ✅ | ❌ | 👁 |
+| Cài đặt (stores, users, chi phí cố định) | ✅ | ❌ | ❌ | ❌ |
+
+👁 = **chỉ xem** (không thêm / sửa / xoá). Quyền được chặn ở cả giao diện lẫn Row Level Security của Supabase.
 
 ---
 
@@ -219,6 +221,11 @@ Chọn tháng bằng bộ chọn tháng/năm ở góc trên. Bấm **🖨 In bá
 
 **Nội dung báo cáo**:
 
+> Từ bản này, **Tổng quan** và **Báo cáo tháng** dùng chung một công thức (chi tiết: `docs/specs/finance-formulas.md`):
+> - **Chi phí** = phát sinh + cố định (phân bổ theo ngày) + lương (phân bổ theo ngày) + chi tiền mặt thủ công (mua vật dụng, COD, khác) + chi ngân hàng thủ công (nhập hàng, chi phí, khác) + phí ngân hàng. Không tính: nộp ngân hàng, NV mang về, điều chỉnh.
+> - **Lợi nhuận** = Doanh thu (bán lẻ + bán sỉ theo ngày bán) − Chi phí.
+> - Trang **Tiền mặt**, **Ngân hàng**, **Chi phí** có thẻ 🧮 diễn giải từng thành phần.
+
 | Mục | Công thức |
 |-----|-----------|
 | Doanh thu theo cửa hàng | Bảng ngang, mỗi cột 1 cửa hàng |
@@ -336,6 +343,32 @@ Vào menu **Doanh thu**:
 
 ---
 
+## Hướng dẫn sử dụng — 税理士 (Kế toán thuế)
+
+Tài khoản **chỉ xem** dành cho kế toán thuế người Nhật để theo dõi số liệu và cố vấn cho chủ shop. Giao diện mặc định tiếng Nhật ở lần đăng nhập đầu (vẫn đổi được VI / EN).
+
+### Menu hiển thị
+
+| Menu | Quyền hạn |
+|------|-----------|
+| Tổng quan · Doanh thu · Tiền mặt · Ngân hàng · Chi phí · Nhân viên · Bán sỉ · Lương · Báo cáo | Xem, lọc theo thời gian / cửa hàng, xem biểu đồ, in báo cáo tháng |
+
+> **Không có quyền**: Nhập doanh thu, Cài đặt, và mọi nút Thêm / Sửa / Xoá / Đánh dấu đã thu. Thanh **閲覧専用モード** luôn hiển thị dưới header.
+
+### 税理士向け（日本語）
+
+- 全店舗の売上・現金・銀行・経費・給与・月次レポートを**閲覧のみ**できます。
+- 入力・編集・削除はできません。画面上部に「閲覧専用モード」と表示されます。
+- 言語は右上の **VI / JA / EN** で切り替えられます。
+
+### Cấp tài khoản (Admin)
+
+**Cài đặt → Người dùng → Thêm người dùng** → chọn vai trò **Kế toán thuế (税理士)**. Ô "Cửa hàng phụ trách" tự ẩn vì tài khoản này xem toàn chuỗi.
+
+> ⚠️ Vai trò này **xem được lương**. Chỉ cấp cho người thực sự cần.
+
+---
+
 ## Sử dụng trên Mobile (iPhone / Android)
 
 1. Mở **Safari** (iPhone) hoặc **Chrome** (Android) → truy cập URL ứng dụng
@@ -380,6 +413,8 @@ Vào **Supabase Dashboard → SQL Editor → New query**:
 
 1. Paste nội dung `supabase/migrations/0001_initial_schema.sql` → **Run**
 2. Paste nội dung `supabase/seed.sql` → **Run**
+3. Chạy lần lượt **từng file** `0002` → `0013` trong `supabase/migrations/` (mỗi file một lần **Run** riêng).
+   - `0011_add_accountant_role.sql` chỉ thêm giá trị enum và **phải commit xong** trước khi chạy `0012_accountant_rls.sql` (Postgres không cho dùng giá trị enum mới trong cùng transaction).
 
 Kiểm tra: **Table Editor** sẽ thấy 12 tables, bảng `stores` có dữ liệu mẫu.
 

@@ -1,4 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { getCashBalance } from "@/lib/finance-server";
+import { BreakdownCard } from "@/components/breakdown-card";
+import { isReadOnly } from "@/lib/permissions";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
@@ -17,36 +21,29 @@ function storeName(s: Store | null, field: string): string {
 }
 
 export default async function CashPage() {
+  const profile = await requireRole("/cash");
+  const readOnly = isReadOnly(profile.role);
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
 
-  const [{ data: stores }, { data: profile }, { data: movements }, { data: allMovements }] = await Promise.all([
+  const [{ data: stores }, { data: movements }, cashBal] = await Promise.all([
     supabase.from("stores").select("id, code, name_vi, name_ja, name_en").eq("active", true).order("sort_order"),
-    supabase.from("user_profiles").select("role, store_id").eq("id", user!.id).single(),
     supabase
       .from("cash_movements")
       .select("id, move_date, store_id, direction, category, amount, note, ref_table, stores(name_vi, name_ja, name_en)")
       .order("move_date", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(80),
-    // Separate query for balance — no limit so it covers all historical records
-    supabase.from("cash_movements").select("store_id, direction, amount"),
+    // Balance is summed in SQL (no row cap) — see migration 0013 / lib/finance.ts
+    getCashBalance(supabase),
   ]);
 
-  const GENERAL_KEY = "__general__";
-
-  const balanceByStore = (allMovements ?? []).reduce<Record<string, number>>((acc, m) => {
-    const key = m.store_id ?? GENERAL_KEY;
-    const prev = acc[key] ?? 0;
-    acc[key] = m.direction === "in" ? prev + m.amount : prev - m.amount;
-    return acc;
-  }, {});
-
-  const totalCash = Object.values(balanceByStore).reduce((s, v) => s + v, 0);
-  const generalBal = balanceByStore[GENERAL_KEY] ?? 0;
+  const balanceByStore = cashBal.byStore;
+  const totalCash = cashBal.total;
+  const generalBal = cashBal.general;
+  const f = dict.finance;
 
   return (
     <div className="space-y-6">
@@ -85,28 +82,38 @@ export default async function CashPage() {
         })}
       </div>
 
+      <BreakdownCard
+        title={f.balanceBreakdown}
+        formula={f.cashFormula}
+        items={cashBal.lines.map((l) => ({ label: f[`cash_${l.key}` as keyof typeof f] ?? f.other, amount: l.amount }))}
+        totalLabel={dict.dashboard.totalCash}
+        total={totalCash}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Form */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PlusCircle className="h-4 w-4" />
-                {dict.cash.newMovement}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CashForm
-                dict={dict}
-                stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
-                profile={{ role: profile?.role ?? "staff", store_id: profile?.store_id ?? null, id: user!.id }}
-              />
-            </CardContent>
-          </Card>
-        </div>
+        {!readOnly && (
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="h-4 w-4" />
+                  {dict.cash.newMovement}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CashForm
+                  dict={dict}
+                  stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
+                  profile={{ role: profile.role, store_id: profile.store_id, id: profile.id }}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Ledger */}
-        <div className="lg:col-span-3">
+        <div className={readOnly ? "lg:col-span-5" : "lg:col-span-3"}>
           <Card>
             <CardHeader><CardTitle>{dict.cash.ledger}</CardTitle></CardHeader>
             <CardContent className="p-0">
@@ -119,7 +126,7 @@ export default async function CashPage() {
                       <th className="px-4 py-2.5 text-left">{dict.cash.category}</th>
                       <th className="px-4 py-2.5 text-left">{dict.common.notes}</th>
                       <th className="px-4 py-2.5 text-right">{dict.cash.amount}</th>
-                      <th className="px-4 py-2.5 w-20"></th>
+                      {!readOnly && <th className="px-4 py-2.5 w-20"></th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
@@ -149,13 +156,15 @@ export default async function CashPage() {
                           <td className={`px-4 py-2 text-right font-semibold tabular-nums ${isIn ? "text-emerald-700" : "text-red-600"}`}>
                             {isIn ? "+" : "−"}{formatYen(m.amount)}
                           </td>
-                          <td className="px-4 py-2">
-                            <CashRowActions
-                              row={{ id: m.id, move_date: m.move_date, store_id: m.store_id ?? null, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null, ref_table: m.ref_table ?? null }}
-                              stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
-                              dict={dict}
-                            />
-                          </td>
+                          {!readOnly && (
+                            <td className="px-4 py-2">
+                              <CashRowActions
+                                row={{ id: m.id, move_date: m.move_date, store_id: m.store_id ?? null, direction: m.direction as "in" | "out", category: m.category, amount: m.amount, note: m.note ?? null, ref_table: m.ref_table ?? null }}
+                                stores={(stores ?? []).map((s) => ({ id: s.id, name: storeName(s, nameField) }))}
+                                dict={dict}
+                              />
+                            </td>
+                          )}
                         </tr>
                       );
                     })}
