@@ -4,9 +4,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Dictionary } from "@/i18n/dictionaries";
-import type { UserRole } from "@/lib/supabase/types";
+import { ALL_ROLES, NO_STORE_ROLES, type UserRole } from "@/lib/permissions";
 
-const ROLES: UserRole[] = ["admin", "manager", "staff"];
+const ROLES: UserRole[] = ALL_ROLES;
 
 export function UserRoleEdit({
   userId,
@@ -48,7 +48,8 @@ export function UserRoleEdit({
       const { error: err } = await supabase.from("user_profiles").update({
         full_name: fullName.trim() || null,
         role,
-        store_id: storeId || null,
+        // Accountant is never tied to a store.
+        store_id: NO_STORE_ROLES.includes(role) ? null : storeId || null,
       }).eq("id", userId);
       if (err) { setError(err.message); return; }
       setOpen(false);
@@ -107,17 +108,25 @@ export function UserRoleEdit({
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-zinc-700">{dict.settings.assignStore}</label>
-                <select
-                  value={storeId}
-                  onChange={(e) => setStoreId(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">— Chung —</option>
-                  {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
-              </div>
+              {!NO_STORE_ROLES.includes(role) && (
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-zinc-700">{dict.settings.assignStore}</label>
+                  <select
+                    value={storeId}
+                    onChange={(e) => setStoreId(e.target.value)}
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">— Chung —</option>
+                    {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+              )}
+
+              {role === "accountant" && (
+                <p className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+                  👁 {dict.settings.accountantHint}
+                </p>
+              )}
 
               {error && (
                 <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</p>

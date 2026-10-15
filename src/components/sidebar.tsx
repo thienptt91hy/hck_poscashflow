@@ -17,34 +17,34 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/i18n/dictionaries";
-import type { UserRole } from "@/lib/supabase/types";
+import { canAccess, type UserRole } from "@/lib/permissions";
 
 interface NavItem {
   href: string;
   labelKey: keyof Dictionary["nav"];
   icon: React.ComponentType<{ className?: string }>;
-  roles?: UserRole[];
   exact?: boolean;
 }
 
+// Visibility per role comes from ROUTE_ROLES in @/lib/permissions.
 const NAV: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard, roles: ["admin", "manager"] },
+  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
   { href: "/sales/new", labelKey: "salesNew", icon: PlusCircle, exact: true },
   { href: "/sales", labelKey: "sales", icon: Receipt, exact: true },
   { href: "/cash", labelKey: "cash", icon: Wallet },
-  { href: "/bank", labelKey: "bank", icon: Landmark, roles: ["admin", "manager"] },
-  { href: "/expenses", labelKey: "expenses", icon: CreditCard, roles: ["admin", "manager"] },
-  { href: "/employees", labelKey: "employees", icon: Users, roles: ["admin", "manager"] },
-  { href: "/wholesale", labelKey: "wholesale", icon: Package, roles: ["admin", "manager"] },
-  { href: "/salary", labelKey: "salary", icon: Banknote, roles: ["admin"] },
-  { href: "/reports", labelKey: "reports", icon: FileBarChart2, roles: ["admin", "manager"] },
-  { href: "/settings", labelKey: "settings", icon: Settings, roles: ["admin"] },
+  { href: "/bank", labelKey: "bank", icon: Landmark },
+  { href: "/expenses", labelKey: "expenses", icon: CreditCard },
+  { href: "/employees", labelKey: "employees", icon: Users },
+  { href: "/wholesale", labelKey: "wholesale", icon: Package },
+  { href: "/salary", labelKey: "salary", icon: Banknote },
+  { href: "/reports", labelKey: "reports", icon: FileBarChart2 },
+  { href: "/settings", labelKey: "settings", icon: Settings },
 ];
 
 export function Sidebar({ dict, role }: { dict: Dictionary; role: UserRole }) {
   const pathname = usePathname();
 
-  const visible = NAV.filter((i) => !i.roles || i.roles.includes(role));
+  const visible = NAV.filter((i) => canAccess(role, i.href));
 
   return (
     <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-zinc-200 bg-white">

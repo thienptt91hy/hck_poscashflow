@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { isReadOnly } from "@/lib/permissions";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,14 +13,14 @@ export const dynamic = "force-dynamic";
 type Store = { id: string; name_vi: string; name_ja: string | null; name_en: string | null };
 
 export default async function EmployeesPage() {
+  const profile = await requireRole("/employees");
+  const readOnly = isReadOnly(profile.role);
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
   const nameField = locale === "ja" ? "name_ja" : locale === "en" ? "name_en" : "name_vi";
 
-  const [{ data: profile }, { data: stores }, { data: employees }] = await Promise.all([
-    supabase.from("user_profiles").select("role").eq("id", user!.id).single(),
+  const [{ data: stores }, { data: employees }] = await Promise.all([
     supabase.from("stores").select("id, name_vi, name_ja, name_en").eq("active", true).order("sort_order"),
     supabase
       .from("employees")
@@ -27,7 +29,7 @@ export default async function EmployeesPage() {
       .order("name"),
   ]);
 
-  const userRole = profile?.role ?? "staff";
+  const userRole = profile.role;
 
   const sName = (s: Store | null) => (s?.[nameField as "name_vi"] as string | null) ?? s?.name_vi ?? "—";
 
@@ -36,24 +38,26 @@ export default async function EmployeesPage() {
       <h1 className="text-2xl font-bold text-zinc-900">{dict.employees.title}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PlusCircle className="h-4 w-4" />{dict.employees.addEmployee}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {userRole === "admin" ? (
-                <EmployeeForm dict={dict} stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))} />
-              ) : (
-                <p className="text-sm text-zinc-400">Chỉ Admin mới có thể thêm nhân viên.</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        {!readOnly && (
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="h-4 w-4" />{dict.employees.addEmployee}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {userRole === "admin" ? (
+                  <EmployeeForm dict={dict} stores={(stores ?? []).map((s) => ({ id: s.id, name: sName(s) }))} />
+                ) : (
+                  <p className="text-sm text-zinc-400">Chỉ Admin mới có thể thêm nhân viên.</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-        <div className="lg:col-span-3">
+        <div className={readOnly ? "lg:col-span-5" : "lg:col-span-3"}>
           <Card>
             <CardHeader><CardTitle>{dict.employees.title}</CardTitle></CardHeader>
             <CardContent className="p-0">

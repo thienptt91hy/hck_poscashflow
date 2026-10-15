@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
@@ -14,6 +15,7 @@ import { StoreRowActions } from "./store-row-actions";
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
+  await requireRole("/settings");
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
@@ -163,8 +165,11 @@ export default async function SettingsPage() {
                         <span className={`text-xs rounded px-1.5 py-0.5 ${
                           u.role === "admin" ? "bg-purple-100 text-purple-700"
                           : u.role === "manager" ? "bg-blue-100 text-blue-700"
+                          : u.role === "accountant" ? "bg-amber-100 text-amber-700"
                           : "bg-zinc-100 text-zinc-600"
-                        }`}>{u.role}</span>
+                        }`}>
+                          {(dict.settings[`role_${u.role}` as keyof typeof dict.settings] as string | undefined) ?? u.role}
+                        </span>
                       </td>
                       <td className="px-4 py-2.5 text-zinc-500 text-xs">{storeLbl}</td>
                       <td className="px-4 py-2.5 text-center">

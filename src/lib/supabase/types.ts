@@ -1,4 +1,5 @@
-export type UserRole = "admin" | "manager" | "staff";
+import type { UserRole } from "@/lib/permissions";
+export type { UserRole };
 export type RevenueStream = "main" | "cafe_bakery";
 
 export interface Store {

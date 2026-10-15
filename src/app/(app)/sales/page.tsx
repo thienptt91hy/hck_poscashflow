@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { isReadOnly } from "@/lib/permissions";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
@@ -17,6 +19,8 @@ export default async function SalesListPage({
 }: {
   searchParams: Promise<{ from?: string; to?: string; store?: string }>;
 }) {
+  const profile = await requireRole("/sales");
+  const readOnly = isReadOnly(profile.role);
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
@@ -78,13 +82,15 @@ export default async function SalesListPage({
       {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-bold text-zinc-900">{dict.sales.title}</h1>
-        <Link
-          href="/sales/new"
-          className="inline-flex h-9 items-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          <PlusCircle className="h-4 w-4" />
-          {dict.sales.newEntry}
-        </Link>
+        {!readOnly && (
+          <Link
+            href="/sales/new"
+            className="inline-flex h-9 items-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <PlusCircle className="h-4 w-4" />
+            {dict.sales.newEntry}
+          </Link>
+        )}
       </div>
 
       {/* Filters */}
@@ -160,7 +166,7 @@ export default async function SalesListPage({
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.bankTransfer}</th>
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.cashExpense}</th>
                     <th className="px-4 py-2.5 text-right font-medium">{dict.sales.totalRevenue}</th>
-                    <th className="px-4 py-2.5 text-center font-medium w-20"></th>
+                    {!readOnly && <th className="px-4 py-2.5 text-center font-medium w-20"></th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
@@ -197,24 +203,26 @@ export default async function SalesListPage({
                         <td className="px-4 py-2.5 text-right font-semibold tabular-nums">
                           {formatYen(r.total_revenue)}
                         </td>
-                        <td className="px-4 py-2.5">
-                          <SalesRowActions
-                            row={{
-                              id: r.id,
-                              sale_date: r.sale_date,
-                              store_id: r.store_id,
-                              revenue_stream: r.revenue_stream,
-                              customer_count: r.customer_count,
-                              cash: r.cash,
-                              qr_card: r.qr_card,
-                              bank_transfer: r.bank_transfer,
-                              cash_expense_items: (r.cash_expense_items as { amount: number; note: string | null }[] | null) ?? [],
-                              notes: r.notes ?? null,
-                            }}
-                            stores={storeOpts}
-                            dict={dict}
-                          />
-                        </td>
+                        {!readOnly && (
+                          <td className="px-4 py-2.5">
+                            <SalesRowActions
+                              row={{
+                                id: r.id,
+                                sale_date: r.sale_date,
+                                store_id: r.store_id,
+                                revenue_stream: r.revenue_stream,
+                                customer_count: r.customer_count,
+                                cash: r.cash,
+                                qr_card: r.qr_card,
+                                bank_transfer: r.bank_transfer,
+                                cash_expense_items: (r.cash_expense_items as { amount: number; note: string | null }[] | null) ?? [],
+                                notes: r.notes ?? null,
+                              }}
+                              stores={storeOpts}
+                              dict={dict}
+                            />
+                          </td>
+                        )}
                       </tr>
                     );
                   })}
@@ -237,7 +245,7 @@ export default async function SalesListPage({
                       {formatYen((rows ?? []).reduce((s, r) => s + r.cash_expense, 0))}
                     </td>
                     <td className="px-4 py-2.5 text-right tabular-nums">{formatYen(totalRevenue)}</td>
-                    <td />
+                    {!readOnly && <td />}
                   </tr>
                 </tfoot>
               </table>

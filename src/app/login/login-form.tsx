@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { LOCALE_COOKIE, isLocale } from "@/lib/locale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,12 +23,21 @@ export function LoginForm({ dict }: { dict: Dictionary }) {
     setLoading(true);
     setError(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError(dict.auth.invalidCredentials);
       setLoading(false);
       return;
     }
+
+    // First login on this device: honour the account's preferred UI language
+    // (e.g. accountant / 税理士 accounts are created with locale = "ja").
+    const preferred = data.user?.user_metadata?.locale;
+    const hasLocaleCookie = document.cookie.split("; ").some((c) => c.startsWith(`${LOCALE_COOKIE}=`));
+    if (isLocale(preferred) && !hasLocaleCookie) {
+      document.cookie = `${LOCALE_COOKIE}=${preferred}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    }
+
     const redirectTo = params.get("from") || "/dashboard";
     router.push(redirectTo);
     router.refresh();

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { SalesForm } from "./sales-form";
@@ -7,6 +8,7 @@ import { SalesForm } from "./sales-form";
 export const dynamic = "force-dynamic";
 
 export default async function NewSalePage() {
+  await requireRole("/sales/new");
   const supabase = await createClient();
   const {
     data: { user },

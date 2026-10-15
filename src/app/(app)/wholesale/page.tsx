@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth-server";
+import { isReadOnly } from "@/lib/permissions";
 import { getLocale } from "@/lib/locale-server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatYen } from "@/lib/format";
@@ -10,10 +12,11 @@ import { PlusCircle } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default async function WholesalePage() {
+  const profile = await requireRole("/wholesale");
+  const readOnly = isReadOnly(profile.role);
   const locale = await getLocale();
   const dict = await getDictionary(locale);
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
   const { data: orders } = await supabase
     .from("wholesale_sales")
@@ -55,20 +58,22 @@ export default async function WholesalePage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PlusCircle className="h-4 w-4" />{dict.wholesale.newOrder}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WholesaleForm dict={dict} userId={user!.id} />
-            </CardContent>
-          </Card>
-        </div>
+        {!readOnly && (
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PlusCircle className="h-4 w-4" />{dict.wholesale.newOrder}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <WholesaleForm dict={dict} userId={profile.id} />
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-        <div className="lg:col-span-3">
+        <div className={readOnly ? "lg:col-span-5" : "lg:col-span-3"}>
           <Card>
             <CardHeader><CardTitle>{dict.wholesale.title}</CardTitle></CardHeader>
             <CardContent className="p-0">
@@ -98,11 +103,17 @@ export default async function WholesalePage() {
                         <td className="px-4 py-2 text-zinc-500 text-xs tabular-nums">{o.due_date ?? "—"}</td>
                         <td className="px-4 py-2 text-right font-semibold tabular-nums">{formatYen(o.amount)}</td>
                         <td className="px-4 py-2 text-center">
-                          {o.paid && <span className="text-xs rounded px-1.5 py-0.5 bg-emerald-100 text-emerald-700 mr-1">{dict.wholesale.paid}</span>}
-                          <WholesaleRowActions
-                            row={{ id: o.id, sale_date: o.sale_date, customer_company: o.customer_company, amount: o.amount, payment_method: o.payment_method, paid: o.paid, due_date: o.due_date ?? null, note: o.note ?? null }}
-                            dict={dict}
-                          />
+                          {o.paid ? (
+                            <span className="text-xs rounded px-1.5 py-0.5 bg-emerald-100 text-emerald-700 mr-1">{dict.wholesale.paid}</span>
+                          ) : readOnly ? (
+                            <span className="text-xs rounded px-1.5 py-0.5 bg-orange-100 text-orange-700 mr-1">{dict.wholesale.unpaid}</span>
+                          ) : null}
+                          {!readOnly && (
+                            <WholesaleRowActions
+                              row={{ id: o.id, sale_date: o.sale_date, customer_company: o.customer_company, amount: o.amount, payment_method: o.payment_method, paid: o.paid, due_date: o.due_date ?? null, note: o.note ?? null }}
+                              dict={dict}
+                            />
+                          )}
                         </td>
                       </tr>
                     ))}
